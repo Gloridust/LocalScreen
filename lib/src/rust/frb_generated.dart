@@ -614,6 +614,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  LocalIdentity dco_decode_box_autoadd_local_identity(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_local_identity(raw);
+  }
+
+  @protected
   NodeConfig dco_decode_box_autoadd_node_config(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_node_config(raw);
@@ -707,38 +713,42 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     switch (raw[0]) {
       case 0:
+        return NodeEvent_Ready(
+          identity: dco_decode_box_autoadd_local_identity(raw[1]),
+        );
+      case 1:
         return NodeEvent_PeerFound(
           peer: dco_decode_box_autoadd_device_info(raw[1]),
         );
-      case 1:
-        return NodeEvent_PeerLost(id: dco_decode_String(raw[1]));
       case 2:
+        return NodeEvent_PeerLost(id: dco_decode_String(raw[1]));
+      case 3:
         return NodeEvent_IncomingRequest(
           sessionId: dco_decode_String(raw[1]),
           peer: dco_decode_box_autoadd_device_info(raw[2]),
           mode: dco_decode_share_mode(raw[3]),
           pin: dco_decode_opt_String(raw[4]),
         );
-      case 3:
-        return NodeEvent_PinRequired(sessionId: dco_decode_String(raw[1]));
       case 4:
+        return NodeEvent_PinRequired(sessionId: dco_decode_String(raw[1]));
+      case 5:
         return NodeEvent_PinRejected(
           sessionId: dco_decode_String(raw[1]),
           attemptsLeft: dco_decode_u_8(raw[2]),
         );
-      case 5:
+      case 6:
         return NodeEvent_SessionEstablished(
           sessionId: dco_decode_String(raw[1]),
           peer: dco_decode_box_autoadd_device_info(raw[2]),
           role: dco_decode_session_role(raw[3]),
           mode: dco_decode_share_mode(raw[4]),
         );
-      case 6:
+      case 7:
         return NodeEvent_Signal(
           sessionId: dco_decode_String(raw[1]),
           payload: dco_decode_String(raw[2]),
         );
-      case 7:
+      case 8:
         return NodeEvent_SessionClosed(
           sessionId: dco_decode_String(raw[1]),
           reason: dco_decode_close_reason(raw[2]),
@@ -816,6 +826,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   DeviceInfo sse_decode_box_autoadd_device_info(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_device_info(deserializer));
+  }
+
+  @protected
+  LocalIdentity sse_decode_box_autoadd_local_identity(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_local_identity(deserializer));
   }
 
   @protected
@@ -937,12 +955,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var tag_ = sse_decode_i_32(deserializer);
     switch (tag_) {
       case 0:
+        var var_identity = sse_decode_box_autoadd_local_identity(deserializer);
+        return NodeEvent_Ready(identity: var_identity);
+      case 1:
         var var_peer = sse_decode_box_autoadd_device_info(deserializer);
         return NodeEvent_PeerFound(peer: var_peer);
-      case 1:
+      case 2:
         var var_id = sse_decode_String(deserializer);
         return NodeEvent_PeerLost(id: var_id);
-      case 2:
+      case 3:
         var var_sessionId = sse_decode_String(deserializer);
         var var_peer = sse_decode_box_autoadd_device_info(deserializer);
         var var_mode = sse_decode_share_mode(deserializer);
@@ -953,17 +974,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           mode: var_mode,
           pin: var_pin,
         );
-      case 3:
+      case 4:
         var var_sessionId = sse_decode_String(deserializer);
         return NodeEvent_PinRequired(sessionId: var_sessionId);
-      case 4:
+      case 5:
         var var_sessionId = sse_decode_String(deserializer);
         var var_attemptsLeft = sse_decode_u_8(deserializer);
         return NodeEvent_PinRejected(
           sessionId: var_sessionId,
           attemptsLeft: var_attemptsLeft,
         );
-      case 5:
+      case 6:
         var var_sessionId = sse_decode_String(deserializer);
         var var_peer = sse_decode_box_autoadd_device_info(deserializer);
         var var_role = sse_decode_session_role(deserializer);
@@ -974,11 +995,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           role: var_role,
           mode: var_mode,
         );
-      case 6:
+      case 7:
         var var_sessionId = sse_decode_String(deserializer);
         var var_payload = sse_decode_String(deserializer);
         return NodeEvent_Signal(sessionId: var_sessionId, payload: var_payload);
-      case 7:
+      case 8:
         var var_sessionId = sse_decode_String(deserializer);
         var var_reason = sse_decode_close_reason(deserializer);
         return NodeEvent_SessionClosed(
@@ -1080,6 +1101,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_local_identity(
+    LocalIdentity self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_local_identity(self, serializer);
+  }
+
+  @protected
   void sse_encode_box_autoadd_node_config(
     NodeConfig self,
     SseSerializer serializer,
@@ -1173,11 +1203,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_node_event(NodeEvent self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     switch (self) {
-      case NodeEvent_PeerFound(peer: final peer):
+      case NodeEvent_Ready(identity: final identity):
         sse_encode_i_32(0, serializer);
+        sse_encode_box_autoadd_local_identity(identity, serializer);
+      case NodeEvent_PeerFound(peer: final peer):
+        sse_encode_i_32(1, serializer);
         sse_encode_box_autoadd_device_info(peer, serializer);
       case NodeEvent_PeerLost(id: final id):
-        sse_encode_i_32(1, serializer);
+        sse_encode_i_32(2, serializer);
         sse_encode_String(id, serializer);
       case NodeEvent_IncomingRequest(
         sessionId: final sessionId,
@@ -1185,19 +1218,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         mode: final mode,
         pin: final pin,
       ):
-        sse_encode_i_32(2, serializer);
+        sse_encode_i_32(3, serializer);
         sse_encode_String(sessionId, serializer);
         sse_encode_box_autoadd_device_info(peer, serializer);
         sse_encode_share_mode(mode, serializer);
         sse_encode_opt_String(pin, serializer);
       case NodeEvent_PinRequired(sessionId: final sessionId):
-        sse_encode_i_32(3, serializer);
+        sse_encode_i_32(4, serializer);
         sse_encode_String(sessionId, serializer);
       case NodeEvent_PinRejected(
         sessionId: final sessionId,
         attemptsLeft: final attemptsLeft,
       ):
-        sse_encode_i_32(4, serializer);
+        sse_encode_i_32(5, serializer);
         sse_encode_String(sessionId, serializer);
         sse_encode_u_8(attemptsLeft, serializer);
       case NodeEvent_SessionEstablished(
@@ -1206,20 +1239,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         role: final role,
         mode: final mode,
       ):
-        sse_encode_i_32(5, serializer);
+        sse_encode_i_32(6, serializer);
         sse_encode_String(sessionId, serializer);
         sse_encode_box_autoadd_device_info(peer, serializer);
         sse_encode_session_role(role, serializer);
         sse_encode_share_mode(mode, serializer);
       case NodeEvent_Signal(sessionId: final sessionId, payload: final payload):
-        sse_encode_i_32(6, serializer);
+        sse_encode_i_32(7, serializer);
         sse_encode_String(sessionId, serializer);
         sse_encode_String(payload, serializer);
       case NodeEvent_SessionClosed(
         sessionId: final sessionId,
         reason: final reason,
       ):
-        sse_encode_i_32(7, serializer);
+        sse_encode_i_32(8, serializer);
         sse_encode_String(sessionId, serializer);
         sse_encode_close_reason(reason, serializer);
     }

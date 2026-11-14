@@ -64,7 +64,11 @@ pub async fn start(config: NodeConfig, events: StreamSink<NodeEvent>) -> anyhow:
         if let Some(previous) = slot.take() {
             previous.shutdown().await;
         }
-        let node = Node::start(NodeOptions::new(config), Arc::new(DartSink(events))).await?;
+        let sink = Arc::new(DartSink(events));
+        let node = Node::start(NodeOptions::new(config), sink.clone()).await?;
+        sink.emit(NodeEvent::Ready {
+            identity: node.identity(),
+        });
         *slot = Some(node);
         Ok(())
     })

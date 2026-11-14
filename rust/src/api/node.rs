@@ -16,9 +16,9 @@ pub fn init_app() {
 
 /// Starts the node and streams [`NodeEvent`]s into `events` until [`stop_node`].
 ///
-/// The bridge turns the sink into the Dart return value, so the identity is
-/// fetched separately with [`local_identity`] once the first event arrives or
-/// this call resolves.
+/// The bridge turns the sink into the Dart return value, so success is
+/// reported in-band: the first event is [`NodeEvent::Ready`]. A failed start
+/// surfaces as an error on the Dart stream instead.
 pub async fn start_node(config: NodeConfig, events: StreamSink<NodeEvent>) -> anyhow::Result<()> {
     bridge::start(config, events).await
 }

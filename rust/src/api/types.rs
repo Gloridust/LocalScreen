@@ -60,7 +60,8 @@ pub struct NodeConfig {
     pub storage_dir: String,
     /// Whether this node advertises itself on the LAN.
     pub discoverable: bool,
-    /// TCP port for the control channel; `0` picks a free port.
+    /// TCP port for the control channel. `0` uses the default port (53520)
+    /// and falls back to any free port when it is taken.
     pub port: u16,
 }
 
@@ -92,6 +93,8 @@ pub struct DeviceInfo {
 /// Events pushed from the node to the UI.
 #[derive(Debug, Clone)]
 pub enum NodeEvent {
+    /// The node is listening. Always the first event of a successful start.
+    Ready { identity: LocalIdentity },
     /// A peer appeared, or its details changed.
     PeerFound { peer: DeviceInfo },
     /// A peer is no longer reachable.

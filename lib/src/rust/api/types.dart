@@ -130,7 +130,8 @@ class NodeConfig {
   /// Whether this node advertises itself on the LAN.
   final bool discoverable;
 
-  /// TCP port for the control channel; `0` picks a free port.
+  /// TCP port for the control channel. `0` uses the default port (53520)
+  /// and falls back to any free port when it is taken.
   final int port;
 
   const NodeConfig({
@@ -167,6 +168,10 @@ class NodeConfig {
 @freezed
 sealed class NodeEvent with _$NodeEvent {
   const NodeEvent._();
+
+  /// The node is listening. Always the first event of a successful start.
+  const factory NodeEvent.ready({required LocalIdentity identity}) =
+      NodeEvent_Ready;
 
   /// A peer appeared, or its details changed.
   const factory NodeEvent.peerFound({required DeviceInfo peer}) =

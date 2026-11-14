@@ -56,10 +56,11 @@ extension NodeEventPatterns on NodeEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( NodeEvent_PeerFound value)?  peerFound,TResult Function( NodeEvent_PeerLost value)?  peerLost,TResult Function( NodeEvent_IncomingRequest value)?  incomingRequest,TResult Function( NodeEvent_PinRequired value)?  pinRequired,TResult Function( NodeEvent_PinRejected value)?  pinRejected,TResult Function( NodeEvent_SessionEstablished value)?  sessionEstablished,TResult Function( NodeEvent_Signal value)?  signal,TResult Function( NodeEvent_SessionClosed value)?  sessionClosed,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( NodeEvent_Ready value)?  ready,TResult Function( NodeEvent_PeerFound value)?  peerFound,TResult Function( NodeEvent_PeerLost value)?  peerLost,TResult Function( NodeEvent_IncomingRequest value)?  incomingRequest,TResult Function( NodeEvent_PinRequired value)?  pinRequired,TResult Function( NodeEvent_PinRejected value)?  pinRejected,TResult Function( NodeEvent_SessionEstablished value)?  sessionEstablished,TResult Function( NodeEvent_Signal value)?  signal,TResult Function( NodeEvent_SessionClosed value)?  sessionClosed,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case NodeEvent_PeerFound() when peerFound != null:
+case NodeEvent_Ready() when ready != null:
+return ready(_that);case NodeEvent_PeerFound() when peerFound != null:
 return peerFound(_that);case NodeEvent_PeerLost() when peerLost != null:
 return peerLost(_that);case NodeEvent_IncomingRequest() when incomingRequest != null:
 return incomingRequest(_that);case NodeEvent_PinRequired() when pinRequired != null:
@@ -85,10 +86,11 @@ return sessionClosed(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( NodeEvent_PeerFound value)  peerFound,required TResult Function( NodeEvent_PeerLost value)  peerLost,required TResult Function( NodeEvent_IncomingRequest value)  incomingRequest,required TResult Function( NodeEvent_PinRequired value)  pinRequired,required TResult Function( NodeEvent_PinRejected value)  pinRejected,required TResult Function( NodeEvent_SessionEstablished value)  sessionEstablished,required TResult Function( NodeEvent_Signal value)  signal,required TResult Function( NodeEvent_SessionClosed value)  sessionClosed,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( NodeEvent_Ready value)  ready,required TResult Function( NodeEvent_PeerFound value)  peerFound,required TResult Function( NodeEvent_PeerLost value)  peerLost,required TResult Function( NodeEvent_IncomingRequest value)  incomingRequest,required TResult Function( NodeEvent_PinRequired value)  pinRequired,required TResult Function( NodeEvent_PinRejected value)  pinRejected,required TResult Function( NodeEvent_SessionEstablished value)  sessionEstablished,required TResult Function( NodeEvent_Signal value)  signal,required TResult Function( NodeEvent_SessionClosed value)  sessionClosed,}){
 final _that = this;
 switch (_that) {
-case NodeEvent_PeerFound():
+case NodeEvent_Ready():
+return ready(_that);case NodeEvent_PeerFound():
 return peerFound(_that);case NodeEvent_PeerLost():
 return peerLost(_that);case NodeEvent_IncomingRequest():
 return incomingRequest(_that);case NodeEvent_PinRequired():
@@ -110,10 +112,11 @@ return sessionClosed(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( NodeEvent_PeerFound value)?  peerFound,TResult? Function( NodeEvent_PeerLost value)?  peerLost,TResult? Function( NodeEvent_IncomingRequest value)?  incomingRequest,TResult? Function( NodeEvent_PinRequired value)?  pinRequired,TResult? Function( NodeEvent_PinRejected value)?  pinRejected,TResult? Function( NodeEvent_SessionEstablished value)?  sessionEstablished,TResult? Function( NodeEvent_Signal value)?  signal,TResult? Function( NodeEvent_SessionClosed value)?  sessionClosed,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( NodeEvent_Ready value)?  ready,TResult? Function( NodeEvent_PeerFound value)?  peerFound,TResult? Function( NodeEvent_PeerLost value)?  peerLost,TResult? Function( NodeEvent_IncomingRequest value)?  incomingRequest,TResult? Function( NodeEvent_PinRequired value)?  pinRequired,TResult? Function( NodeEvent_PinRejected value)?  pinRejected,TResult? Function( NodeEvent_SessionEstablished value)?  sessionEstablished,TResult? Function( NodeEvent_Signal value)?  signal,TResult? Function( NodeEvent_SessionClosed value)?  sessionClosed,}){
 final _that = this;
 switch (_that) {
-case NodeEvent_PeerFound() when peerFound != null:
+case NodeEvent_Ready() when ready != null:
+return ready(_that);case NodeEvent_PeerFound() when peerFound != null:
 return peerFound(_that);case NodeEvent_PeerLost() when peerLost != null:
 return peerLost(_that);case NodeEvent_IncomingRequest() when incomingRequest != null:
 return incomingRequest(_that);case NodeEvent_PinRequired() when pinRequired != null:
@@ -138,9 +141,10 @@ return sessionClosed(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( DeviceInfo peer)?  peerFound,TResult Function( String id)?  peerLost,TResult Function( String sessionId,  DeviceInfo peer,  ShareMode mode,  String? pin)?  incomingRequest,TResult Function( String sessionId)?  pinRequired,TResult Function( String sessionId,  int attemptsLeft)?  pinRejected,TResult Function( String sessionId,  DeviceInfo peer,  SessionRole role,  ShareMode mode)?  sessionEstablished,TResult Function( String sessionId,  String payload)?  signal,TResult Function( String sessionId,  CloseReason reason)?  sessionClosed,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( LocalIdentity identity)?  ready,TResult Function( DeviceInfo peer)?  peerFound,TResult Function( String id)?  peerLost,TResult Function( String sessionId,  DeviceInfo peer,  ShareMode mode,  String? pin)?  incomingRequest,TResult Function( String sessionId)?  pinRequired,TResult Function( String sessionId,  int attemptsLeft)?  pinRejected,TResult Function( String sessionId,  DeviceInfo peer,  SessionRole role,  ShareMode mode)?  sessionEstablished,TResult Function( String sessionId,  String payload)?  signal,TResult Function( String sessionId,  CloseReason reason)?  sessionClosed,required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case NodeEvent_PeerFound() when peerFound != null:
+case NodeEvent_Ready() when ready != null:
+return ready(_that.identity);case NodeEvent_PeerFound() when peerFound != null:
 return peerFound(_that.peer);case NodeEvent_PeerLost() when peerLost != null:
 return peerLost(_that.id);case NodeEvent_IncomingRequest() when incomingRequest != null:
 return incomingRequest(_that.sessionId,_that.peer,_that.mode,_that.pin);case NodeEvent_PinRequired() when pinRequired != null:
@@ -166,9 +170,10 @@ return sessionClosed(_that.sessionId,_that.reason);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( DeviceInfo peer)  peerFound,required TResult Function( String id)  peerLost,required TResult Function( String sessionId,  DeviceInfo peer,  ShareMode mode,  String? pin)  incomingRequest,required TResult Function( String sessionId)  pinRequired,required TResult Function( String sessionId,  int attemptsLeft)  pinRejected,required TResult Function( String sessionId,  DeviceInfo peer,  SessionRole role,  ShareMode mode)  sessionEstablished,required TResult Function( String sessionId,  String payload)  signal,required TResult Function( String sessionId,  CloseReason reason)  sessionClosed,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( LocalIdentity identity)  ready,required TResult Function( DeviceInfo peer)  peerFound,required TResult Function( String id)  peerLost,required TResult Function( String sessionId,  DeviceInfo peer,  ShareMode mode,  String? pin)  incomingRequest,required TResult Function( String sessionId)  pinRequired,required TResult Function( String sessionId,  int attemptsLeft)  pinRejected,required TResult Function( String sessionId,  DeviceInfo peer,  SessionRole role,  ShareMode mode)  sessionEstablished,required TResult Function( String sessionId,  String payload)  signal,required TResult Function( String sessionId,  CloseReason reason)  sessionClosed,}) {final _that = this;
 switch (_that) {
-case NodeEvent_PeerFound():
+case NodeEvent_Ready():
+return ready(_that.identity);case NodeEvent_PeerFound():
 return peerFound(_that.peer);case NodeEvent_PeerLost():
 return peerLost(_that.id);case NodeEvent_IncomingRequest():
 return incomingRequest(_that.sessionId,_that.peer,_that.mode,_that.pin);case NodeEvent_PinRequired():
@@ -190,9 +195,10 @@ return sessionClosed(_that.sessionId,_that.reason);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( DeviceInfo peer)?  peerFound,TResult? Function( String id)?  peerLost,TResult? Function( String sessionId,  DeviceInfo peer,  ShareMode mode,  String? pin)?  incomingRequest,TResult? Function( String sessionId)?  pinRequired,TResult? Function( String sessionId,  int attemptsLeft)?  pinRejected,TResult? Function( String sessionId,  DeviceInfo peer,  SessionRole role,  ShareMode mode)?  sessionEstablished,TResult? Function( String sessionId,  String payload)?  signal,TResult? Function( String sessionId,  CloseReason reason)?  sessionClosed,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( LocalIdentity identity)?  ready,TResult? Function( DeviceInfo peer)?  peerFound,TResult? Function( String id)?  peerLost,TResult? Function( String sessionId,  DeviceInfo peer,  ShareMode mode,  String? pin)?  incomingRequest,TResult? Function( String sessionId)?  pinRequired,TResult? Function( String sessionId,  int attemptsLeft)?  pinRejected,TResult? Function( String sessionId,  DeviceInfo peer,  SessionRole role,  ShareMode mode)?  sessionEstablished,TResult? Function( String sessionId,  String payload)?  signal,TResult? Function( String sessionId,  CloseReason reason)?  sessionClosed,}) {final _that = this;
 switch (_that) {
-case NodeEvent_PeerFound() when peerFound != null:
+case NodeEvent_Ready() when ready != null:
+return ready(_that.identity);case NodeEvent_PeerFound() when peerFound != null:
 return peerFound(_that.peer);case NodeEvent_PeerLost() when peerLost != null:
 return peerLost(_that.id);case NodeEvent_IncomingRequest() when incomingRequest != null:
 return incomingRequest(_that.sessionId,_that.peer,_that.mode,_that.pin);case NodeEvent_PinRequired() when pinRequired != null:
@@ -205,6 +211,74 @@ return sessionClosed(_that.sessionId,_that.reason);case _:
 
 }
 }
+
+}
+
+/// @nodoc
+
+
+class NodeEvent_Ready extends NodeEvent {
+  const NodeEvent_Ready({required this.identity}): super._();
+  
+
+ final  LocalIdentity identity;
+
+/// Create a copy of NodeEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$NodeEvent_ReadyCopyWith<NodeEvent_Ready> get copyWith => _$NodeEvent_ReadyCopyWithImpl<NodeEvent_Ready>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is NodeEvent_Ready&&(identical(other.identity, identity) || other.identity == identity));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,identity);
+}
+
+@override
+String toString() {
+    return 'NodeEvent.ready(identity: $identity)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $NodeEvent_ReadyCopyWith<$Res> implements $NodeEventCopyWith<$Res> {
+  factory $NodeEvent_ReadyCopyWith(NodeEvent_Ready value, $Res Function(NodeEvent_Ready) _then) = _$NodeEvent_ReadyCopyWithImpl;
+@useResult
+$Res call({
+ LocalIdentity identity
+});
+
+
+
+
+}
+/// @nodoc
+class _$NodeEvent_ReadyCopyWithImpl<$Res>
+    implements $NodeEvent_ReadyCopyWith<$Res> {
+  _$NodeEvent_ReadyCopyWithImpl(this._self, this._then);
+
+  final NodeEvent_Ready _self;
+  final $Res Function(NodeEvent_Ready) _then;
+
+/// Create a copy of NodeEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? identity = null,}) {
+  return _then(NodeEvent_Ready(
+identity: null == identity ? _self.identity : identity // ignore: cast_nullable_to_non_nullable
+as LocalIdentity,
+  ));
+}
+
 
 }
 

@@ -40,6 +40,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   DeviceInfo dco_decode_box_autoadd_device_info(dynamic raw);
 
   @protected
+  LocalIdentity dco_decode_box_autoadd_local_identity(dynamic raw);
+
+  @protected
   NodeConfig dco_decode_box_autoadd_node_config(dynamic raw);
 
   @protected
@@ -106,6 +109,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   DeviceInfo sse_decode_box_autoadd_device_info(SseDeserializer deserializer);
+
+  @protected
+  LocalIdentity sse_decode_box_autoadd_local_identity(
+    SseDeserializer deserializer,
+  );
 
   @protected
   NodeConfig sse_decode_box_autoadd_node_config(SseDeserializer deserializer);
@@ -179,6 +187,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_box_autoadd_device_info(
     DeviceInfo self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_local_identity(
+    LocalIdentity self,
     SseSerializer serializer,
   );
 

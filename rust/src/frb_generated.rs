@@ -770,14 +770,20 @@ impl SseDecode for crate::api::types::NodeEvent {
         let mut tag_ = <i32>::sse_decode(deserializer);
         match tag_ {
             0 => {
+                let mut var_identity = <crate::api::types::LocalIdentity>::sse_decode(deserializer);
+                return crate::api::types::NodeEvent::Ready {
+                    identity: var_identity,
+                };
+            }
+            1 => {
                 let mut var_peer = <crate::api::types::DeviceInfo>::sse_decode(deserializer);
                 return crate::api::types::NodeEvent::PeerFound { peer: var_peer };
             }
-            1 => {
+            2 => {
                 let mut var_id = <String>::sse_decode(deserializer);
                 return crate::api::types::NodeEvent::PeerLost { id: var_id };
             }
-            2 => {
+            3 => {
                 let mut var_sessionId = <String>::sse_decode(deserializer);
                 let mut var_peer = <crate::api::types::DeviceInfo>::sse_decode(deserializer);
                 let mut var_mode = <crate::api::types::ShareMode>::sse_decode(deserializer);
@@ -789,13 +795,13 @@ impl SseDecode for crate::api::types::NodeEvent {
                     pin: var_pin,
                 };
             }
-            3 => {
+            4 => {
                 let mut var_sessionId = <String>::sse_decode(deserializer);
                 return crate::api::types::NodeEvent::PinRequired {
                     session_id: var_sessionId,
                 };
             }
-            4 => {
+            5 => {
                 let mut var_sessionId = <String>::sse_decode(deserializer);
                 let mut var_attemptsLeft = <u8>::sse_decode(deserializer);
                 return crate::api::types::NodeEvent::PinRejected {
@@ -803,7 +809,7 @@ impl SseDecode for crate::api::types::NodeEvent {
                     attempts_left: var_attemptsLeft,
                 };
             }
-            5 => {
+            6 => {
                 let mut var_sessionId = <String>::sse_decode(deserializer);
                 let mut var_peer = <crate::api::types::DeviceInfo>::sse_decode(deserializer);
                 let mut var_role = <crate::api::types::SessionRole>::sse_decode(deserializer);
@@ -815,7 +821,7 @@ impl SseDecode for crate::api::types::NodeEvent {
                     mode: var_mode,
                 };
             }
-            6 => {
+            7 => {
                 let mut var_sessionId = <String>::sse_decode(deserializer);
                 let mut var_payload = <String>::sse_decode(deserializer);
                 return crate::api::types::NodeEvent::Signal {
@@ -823,7 +829,7 @@ impl SseDecode for crate::api::types::NodeEvent {
                     payload: var_payload,
                 };
             }
-            7 => {
+            8 => {
                 let mut var_sessionId = <String>::sse_decode(deserializer);
                 let mut var_reason = <crate::api::types::CloseReason>::sse_decode(deserializer);
                 return crate::api::types::NodeEvent::SessionClosed {
@@ -1052,11 +1058,14 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::types::NodeConfig>
 impl flutter_rust_bridge::IntoDart for crate::api::types::NodeEvent {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         match self {
+            crate::api::types::NodeEvent::Ready { identity } => {
+                [0.into_dart(), identity.into_into_dart().into_dart()].into_dart()
+            }
             crate::api::types::NodeEvent::PeerFound { peer } => {
-                [0.into_dart(), peer.into_into_dart().into_dart()].into_dart()
+                [1.into_dart(), peer.into_into_dart().into_dart()].into_dart()
             }
             crate::api::types::NodeEvent::PeerLost { id } => {
-                [1.into_dart(), id.into_into_dart().into_dart()].into_dart()
+                [2.into_dart(), id.into_into_dart().into_dart()].into_dart()
             }
             crate::api::types::NodeEvent::IncomingRequest {
                 session_id,
@@ -1064,7 +1073,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::types::NodeEvent {
                 mode,
                 pin,
             } => [
-                2.into_dart(),
+                3.into_dart(),
                 session_id.into_into_dart().into_dart(),
                 peer.into_into_dart().into_dart(),
                 mode.into_into_dart().into_dart(),
@@ -1072,13 +1081,13 @@ impl flutter_rust_bridge::IntoDart for crate::api::types::NodeEvent {
             ]
             .into_dart(),
             crate::api::types::NodeEvent::PinRequired { session_id } => {
-                [3.into_dart(), session_id.into_into_dart().into_dart()].into_dart()
+                [4.into_dart(), session_id.into_into_dart().into_dart()].into_dart()
             }
             crate::api::types::NodeEvent::PinRejected {
                 session_id,
                 attempts_left,
             } => [
-                4.into_dart(),
+                5.into_dart(),
                 session_id.into_into_dart().into_dart(),
                 attempts_left.into_into_dart().into_dart(),
             ]
@@ -1089,7 +1098,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::types::NodeEvent {
                 role,
                 mode,
             } => [
-                5.into_dart(),
+                6.into_dart(),
                 session_id.into_into_dart().into_dart(),
                 peer.into_into_dart().into_dart(),
                 role.into_into_dart().into_dart(),
@@ -1100,13 +1109,13 @@ impl flutter_rust_bridge::IntoDart for crate::api::types::NodeEvent {
                 session_id,
                 payload,
             } => [
-                6.into_dart(),
+                7.into_dart(),
                 session_id.into_into_dart().into_dart(),
                 payload.into_into_dart().into_dart(),
             ]
             .into_dart(),
             crate::api::types::NodeEvent::SessionClosed { session_id, reason } => [
-                7.into_dart(),
+                8.into_dart(),
                 session_id.into_into_dart().into_dart(),
                 reason.into_into_dart().into_dart(),
             ]
@@ -1310,12 +1319,16 @@ impl SseEncode for crate::api::types::NodeEvent {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         match self {
-            crate::api::types::NodeEvent::PeerFound { peer } => {
+            crate::api::types::NodeEvent::Ready { identity } => {
                 <i32>::sse_encode(0, serializer);
+                <crate::api::types::LocalIdentity>::sse_encode(identity, serializer);
+            }
+            crate::api::types::NodeEvent::PeerFound { peer } => {
+                <i32>::sse_encode(1, serializer);
                 <crate::api::types::DeviceInfo>::sse_encode(peer, serializer);
             }
             crate::api::types::NodeEvent::PeerLost { id } => {
-                <i32>::sse_encode(1, serializer);
+                <i32>::sse_encode(2, serializer);
                 <String>::sse_encode(id, serializer);
             }
             crate::api::types::NodeEvent::IncomingRequest {
@@ -1324,21 +1337,21 @@ impl SseEncode for crate::api::types::NodeEvent {
                 mode,
                 pin,
             } => {
-                <i32>::sse_encode(2, serializer);
+                <i32>::sse_encode(3, serializer);
                 <String>::sse_encode(session_id, serializer);
                 <crate::api::types::DeviceInfo>::sse_encode(peer, serializer);
                 <crate::api::types::ShareMode>::sse_encode(mode, serializer);
                 <Option<String>>::sse_encode(pin, serializer);
             }
             crate::api::types::NodeEvent::PinRequired { session_id } => {
-                <i32>::sse_encode(3, serializer);
+                <i32>::sse_encode(4, serializer);
                 <String>::sse_encode(session_id, serializer);
             }
             crate::api::types::NodeEvent::PinRejected {
                 session_id,
                 attempts_left,
             } => {
-                <i32>::sse_encode(4, serializer);
+                <i32>::sse_encode(5, serializer);
                 <String>::sse_encode(session_id, serializer);
                 <u8>::sse_encode(attempts_left, serializer);
             }
@@ -1348,7 +1361,7 @@ impl SseEncode for crate::api::types::NodeEvent {
                 role,
                 mode,
             } => {
-                <i32>::sse_encode(5, serializer);
+                <i32>::sse_encode(6, serializer);
                 <String>::sse_encode(session_id, serializer);
                 <crate::api::types::DeviceInfo>::sse_encode(peer, serializer);
                 <crate::api::types::SessionRole>::sse_encode(role, serializer);
@@ -1358,12 +1371,12 @@ impl SseEncode for crate::api::types::NodeEvent {
                 session_id,
                 payload,
             } => {
-                <i32>::sse_encode(6, serializer);
+                <i32>::sse_encode(7, serializer);
                 <String>::sse_encode(session_id, serializer);
                 <String>::sse_encode(payload, serializer);
             }
             crate::api::types::NodeEvent::SessionClosed { session_id, reason } => {
-                <i32>::sse_encode(7, serializer);
+                <i32>::sse_encode(8, serializer);
                 <String>::sse_encode(session_id, serializer);
                 <crate::api::types::CloseReason>::sse_encode(reason, serializer);
             }

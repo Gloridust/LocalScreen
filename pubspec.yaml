@@ -1,5 +1,5 @@
 name: localscreen
-description: "A new Flutter project."
+description: "LocalScreen: turn any device on your LAN into a second screen."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -39,7 +39,18 @@ dependencies:
   flutter_rust_bridge: 2.13.0
   flutter_webrtc: ^1.6.3
   freezed_annotation: ^3.1.0
-
+  flutter_riverpod: ^3.5.0
+  shared_preferences: ^2.5.6
+  device_info_plus: ^13.3.0
+  path_provider: ^2.1.6
+  wakelock_plus: ^1.8.2
+  window_manager: ^0.5.1
+  intl: ^0.20.3
+  flutter_background: ^1.3.1
+  flutter_localizations:
+    sdk: flutter
+  package_info_plus: ^10.2.2
+  win32_registry: ^3.0.3
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -54,12 +65,14 @@ dev_dependencies:
     sdk: flutter
   freezed: ^4.0.3
   build_runner: ^2.17.1
+  fake_async: ^1.3.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
 flutter:
+  generate: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
