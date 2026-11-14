@@ -110,7 +110,10 @@ pub enum NodeEvent {
     /// Host side: the display is showing a PIN that must be entered here.
     PinRequired { session_id: String },
     /// Host side: the entered PIN was wrong.
-    PinRejected { session_id: String, attempts_left: u8 },
+    PinRejected {
+        session_id: String,
+        attempts_left: u8,
+    },
     /// Both sides: the secure control channel is up; media negotiation can start.
     SessionEstablished {
         session_id: String,
