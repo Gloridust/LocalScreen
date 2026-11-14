@@ -1,0 +1,15 @@
+[package]
+name = "rust_lib_localscreen"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+anyhow = "1.0.104"
+flutter_rust_bridge = "=2.13.0"
+tokio = { version = "1.54.1", features = ["rt-multi-thread", "net", "sync", "time", "macros", "io-util"] }
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }
