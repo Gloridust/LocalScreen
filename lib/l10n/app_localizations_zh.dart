@@ -227,9 +227,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get hostSelectingSource => '请在系统对话框中选择要共享的屏幕。';
 
   @override
-  String hostSelectingVirtualDisplay(String label) {
-    return '已新增一块虚拟显示器。请在系统对话框中选择它（$label）。';
-  }
+  String get hostSelectingVirtualDisplay => '已新增一块虚拟显示器。请在系统对话框中选中它（新出现的那一块）并共享。';
 
   @override
   String get hostPreparingDisplay => '正在创建虚拟显示器…';

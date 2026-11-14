@@ -67,7 +67,7 @@
   "statLatency": "Latency",
   "hostCastingTo": "Casting to",
   "hostSelectingSource": "Choose the screen to share in the system dialog.",
-  "hostSelectingVirtualDisplay": "A virtual display was added. Pick it ({label}) in the system dialog.",
+  "hostSelectingVirtualDisplay": "A virtual display was added. Pick it (the new one) in the system dialog and share.",
   "hostPreparingDisplay": "Creating the virtual display…",
   "noticeExtendFallback": "Couldn't create a virtual display. Mirroring instead.",
   "hostConnecting": "Connecting…",

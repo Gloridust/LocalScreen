@@ -162,16 +162,25 @@ Linux / Android / Windows / macOS 安装包，可在对应的 workflow 运行页
 
 **已在开发机（Ubuntu 26.04）实测**
 
-- 同一台机器上启动两个相互隔离的真实实例（X11 虚拟显示器），走通 mDNS 互相发现 → PIN 配对 →
-  H.264 编码的 WebRTC 投屏 → 副屏渲染与工具条 → 断开 → 重启后免 PIN 重连，
-  截图见 `docs/screenshots/e2e_*.png`。
-- 在真实的 GNOME Wayland 会话中创建并销毁 2560×1600 的虚拟显示器
+- **镜像**：同一台机器上启动两个相互隔离的真实实例（X11 虚拟显示器），走通 mDNS 互相发现 →
+  PIN 配对 → H.264 编码的 WebRTC 投屏 → 副屏渲染与工具条 → 断开 → 重启后免 PIN 重连，
+  截图见 `docs/screenshots/e2e_pin_pairing.png` 等。
+- **扩展**：在一个隔离的无头 GNOME Wayland 会话里运行两个真实实例，走通
+  选择「扩展」→ 配对 → 主机创建虚拟显示器 → 系统门户选屏 → 副屏全屏显示这块虚拟显示器的
+  实时画面（把窗口移到虚拟显示器上，副屏同步出现）→ 断开后虚拟显示器被移除。
+  截图见 `docs/screenshots/e2e_extend_*.png`。
+- 在真实桌面会话中创建并销毁 2560×1600 的虚拟显示器
   （`LS_REAL_MUTTER=1 flutter test test/platform/mutter_virtual_display_test.dart`）。
+
+**已知问题**
+
+- Wayland 下开始投屏时系统选屏对话框会弹出两个（来自 flutter_webrtc 插件枚举屏幕源时的
+  额外请求）。在最上面的那个里选屏并共享即可出画面，另一个取消不影响投屏。
+- 系统没有音频服务（PulseAudio / PipeWire-Pulse）时，libwebrtc 初始化会直接中止进程。
+  正常桌面环境都有音频服务，仅在精简或无头环境会遇到。
 
 **尚未实测**
 
-- 两台物理设备之间（真实 Wi-Fi、不同系统）的发现与投屏。
-- Wayland 门户选屏对话框（需要人工点选），因此「扩展」模式从创建虚拟显示器到副屏出画面的
-  完整链路还没有端到端跑过。
+- 两台物理设备之间（真实 Wi-Fi、不同系统）的发现与投屏——需要真机。
 - Windows / macOS / Android 安装包只验证了能构建，没有运行过。
 - 开机自启在登录后的实际生效。

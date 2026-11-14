@@ -498,8 +498,8 @@ abstract class AppLocalizations {
   /// No description provided for @hostSelectingVirtualDisplay.
   ///
   /// In zh, this message translates to:
-  /// **'已新增一块虚拟显示器。请在系统对话框中选择它（{label}）。'**
-  String hostSelectingVirtualDisplay(String label);
+  /// **'已新增一块虚拟显示器。请在系统对话框中选中它（新出现的那一块）并共享。'**
+  String get hostSelectingVirtualDisplay;
 
   /// No description provided for @hostPreparingDisplay.
   ///

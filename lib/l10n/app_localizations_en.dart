@@ -247,9 +247,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hostSelectingSource => 'Choose the screen to share in the system dialog.';
 
   @override
-  String hostSelectingVirtualDisplay(String label) {
-    return 'A virtual display was added. Pick it ($label) in the system dialog.';
-  }
+  String get hostSelectingVirtualDisplay =>
+      'A virtual display was added. Pick it (the new one) in the system dialog and share.';
 
   @override
   String get hostPreparingDisplay => 'Creating the virtual display…';

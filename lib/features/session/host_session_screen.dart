@@ -59,13 +59,12 @@ class _Console extends StatelessWidget {
     final l10n = context.l10n;
     final peer = controller.peer;
     final phase = controller.phase;
-    final virtualDisplay = controller.virtualDisplayLabel;
     final (status, statusText) = switch (phase) {
       _ when controller.preparingDisplay => (LsStatus.warning, l10n.hostPreparingDisplay),
       MediaPhase.live => (LsStatus.connected, l10n.hostLive),
-      MediaPhase.capturing when virtualDisplay != null => (
+      MediaPhase.capturing when controller.virtualDisplayLabel != null => (
         LsStatus.warning,
-        l10n.hostSelectingVirtualDisplay(virtualDisplay),
+        l10n.hostSelectingVirtualDisplay,
       ),
       MediaPhase.capturing => (LsStatus.warning, l10n.hostSelectingSource),
       MediaPhase.failed => (LsStatus.error, l10n.failNetwork),
