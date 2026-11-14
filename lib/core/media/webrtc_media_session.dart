@@ -169,6 +169,7 @@ class WebRtcMediaSession implements MediaSession {
   }
 
   RTCRtpEncoding _encodingFor(QualityPreset q) => RTCRtpEncoding(
+    minBitrate: q.minBitrate,
     maxBitrate: q.maxBitrate,
     maxFramerate: q.maxFramerate,
     scaleResolutionDownBy: _scale,
@@ -214,6 +215,7 @@ class WebRtcMediaSession implements MediaSession {
       params.encodings = [_encodingFor(_quality)];
     } else {
       final e = encodings.first;
+      e.minBitrate = _quality.minBitrate;
       e.maxBitrate = _quality.maxBitrate;
       e.maxFramerate = _quality.maxFramerate;
       e.scaleResolutionDownBy = _scale;

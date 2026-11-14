@@ -143,8 +143,15 @@ docs/             PLAN.md · DESIGN.md
 
 | 平台 | 副屏端 | 主机端（镜像） | 当前验证 |
 |---|---|---|---|
-| Linux (Wayland / X11) | ✓ | ✓ PipeWire 门户 | 开发机可构建运行 |
+| Linux (Wayland / X11) | ✓ | ✓ PipeWire 门户 / X11 | 见下 |
 | Windows | ✓ | ✓ | 待真机验证 |
 | macOS | ✓ | ✓ 需屏幕录制权限 | 待真机验证 |
 | Android | ✓ | ✓ MediaProjection | 待真机验证 |
 | iOS / iPadOS | ✓ | 需 Broadcast Extension（M3） | 待真机验证 |
+
+**已在开发机（Ubuntu 26.04）实测**：同一台机器上启动两个相互隔离的真实实例（X11 虚拟显示器），
+走通了 mDNS 互相发现 → PIN 配对 → H.264 编码的 WebRTC 投屏 → 副屏渲染与工具条 → 断开 →
+重启后免 PIN 重连的完整链路，截图见 `docs/screenshots/e2e_*.png`。
+
+**尚未实测**：两台物理设备之间（真实 Wi-Fi、不同系统）；Wayland 门户选屏对话框
+（需要人工点选）；Windows / macOS / Android / iOS 的构建与运行；开机自启在登录后的实际生效。

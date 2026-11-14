@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui' show ImageFilter;
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -106,7 +107,10 @@ class _DisplaySessionScreenState extends ConsumerState<DisplaySessionScreen> {
           onHover: (_) => _poke(),
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: _toggleToolbar,
+            // Touch toggles the toolbar; a mouse click only keeps it up,
+            // because hovering has already revealed it.
+            onTapUp: (details) =>
+                details.kind == PointerDeviceKind.touch ? _toggleToolbar() : _poke(),
             child: Scaffold(
               backgroundColor: ls.colors.bg,
               body: Stack(
