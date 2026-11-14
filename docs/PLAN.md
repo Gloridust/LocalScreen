@@ -149,17 +149,29 @@ docs/             PLAN.md · DESIGN.md
 
 ## 6. 平台与验证状态
 
-| 平台 | 副屏端 | 主机端（镜像） | 当前验证 |
-|---|---|---|---|
-| Linux (Wayland / X11) | ✓ | ✓ PipeWire 门户 / X11 | 见下 |
-| Windows | ✓ | ✓ | 待真机验证 |
-| macOS | ✓ | ✓ 需屏幕录制权限 | 待真机验证 |
-| Android | ✓ | ✓ MediaProjection | 待真机验证 |
-| iOS / iPadOS | ✓ | 需 Broadcast Extension（M3） | 待真机验证 |
+| 平台 | 副屏端 | 主机端 | CI 构建 | 运行验证 |
+|---|---|---|---|---|
+| Linux (GNOME Wayland / X11) | ✓ | 镜像 ✓ · 扩展 ✓ (GNOME) | ✓ | 见下 |
+| Windows | ✓ | 镜像 | ✓ | 待真机验证 |
+| macOS | ✓ | 镜像（需屏幕录制权限） | ✓ | 待真机验证 |
+| Android | ✓ | 镜像（MediaProjection） | ✓ | 待真机验证 |
+| iOS / iPadOS | ✓ | 需 Broadcast Extension（M3） | 未构建 | 待真机验证 |
 
-**已在开发机（Ubuntu 26.04）实测**：同一台机器上启动两个相互隔离的真实实例（X11 虚拟显示器），
-走通了 mDNS 互相发现 → PIN 配对 → H.264 编码的 WebRTC 投屏 → 副屏渲染与工具条 → 断开 →
-重启后免 PIN 重连的完整链路，截图见 `docs/screenshots/e2e_*.png`。
+每次推送都会由 GitHub Actions（`.github/workflows/build.yml`）跑静态检查与测试，并构建
+Linux / Android / Windows / macOS 安装包，可在对应的 workflow 运行页面下载。
 
-**尚未实测**：两台物理设备之间（真实 Wi-Fi、不同系统）；Wayland 门户选屏对话框
-（需要人工点选）；Windows / macOS / Android / iOS 的构建与运行；开机自启在登录后的实际生效。
+**已在开发机（Ubuntu 26.04）实测**
+
+- 同一台机器上启动两个相互隔离的真实实例（X11 虚拟显示器），走通 mDNS 互相发现 → PIN 配对 →
+  H.264 编码的 WebRTC 投屏 → 副屏渲染与工具条 → 断开 → 重启后免 PIN 重连，
+  截图见 `docs/screenshots/e2e_*.png`。
+- 在真实的 GNOME Wayland 会话中创建并销毁 2560×1600 的虚拟显示器
+  （`LS_REAL_MUTTER=1 flutter test test/platform/mutter_virtual_display_test.dart`）。
+
+**尚未实测**
+
+- 两台物理设备之间（真实 Wi-Fi、不同系统）的发现与投屏。
+- Wayland 门户选屏对话框（需要人工点选），因此「扩展」模式从创建虚拟显示器到副屏出画面的
+  完整链路还没有端到端跑过。
+- Windows / macOS / Android 安装包只验证了能构建，没有运行过。
+- 开机自启在登录后的实际生效。

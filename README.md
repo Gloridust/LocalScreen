@@ -8,6 +8,11 @@
 
 文档：[产品与技术方案](docs/PLAN.md) · [设计规范](docs/DESIGN.md)
 
+## 下载
+
+每次推送后，[GitHub Actions](https://github.com/Gloridust/LocalScreen/actions/workflows/build.yml) 会构建
+Linux / Android / Windows / macOS 安装包，在对应运行页面的 Artifacts 中下载。
+
 ## 开发
 
 ```bash
