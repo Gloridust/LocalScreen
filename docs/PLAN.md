@@ -45,6 +45,7 @@
 - PIN 配对（6 位、60 秒有效、5 次失败即作废），配对后加入受信任设备
 - 加密控制信道 + WebRTC 媒体，全程不出局域网
 - 镜像投屏：整屏 / 窗口（由各平台系统选择器决定）
+- 开机自启（桌面端）
 - 副屏端沉浸式全屏、屏幕常亮、实时状态浮层（分辨率 / 帧率 / 码率 / 延迟）
 - 画质预设：流畅 / 均衡 / 清晰（分辨率、帧率、码率上限联动）
 - 设置：设备名、可被发现开关、受信任设备管理、主题（跟随系统 / 浅色 / 深色）
@@ -53,18 +54,24 @@
 ### M2 · 真·扩展屏
 
 「扩展」需要操作系统多出一块**虚拟显示器**，各平台机制不同，统一抽象为
-`VirtualDisplayProvider`：
+`VirtualDisplayProvider`（`lib/core/platform/virtual_display.dart`）：
 
-| 主机平台 | 方案 | 备注 |
+| 主机平台 | 方案 | 状态 |
 |---|---|---|
-| Linux · GNOME (Wayland) | ScreenCast 门户 `VIRTUAL` 源 / Mutter `RecordVirtual` | 无需驱动，GNOME 42+ |
-| Linux · KDE (Wayland) | `krfb-virtualmonitor` / KWin 虚拟输出 | |
-| Linux · X11 | `xrandr` 虚拟输出 + 裁剪采集 | 依赖显卡驱动 |
-| Windows | Indirect Display Driver (IddCx) | 需随包签名驱动 |
-| macOS | `CGVirtualDisplay` | 私有 API，非 App Store 分发 |
+| Linux · GNOME (Wayland) | Mutter ScreenCast `RecordVirtual` | **已实现**，无需驱动，GNOME 42+ |
+| Linux · KDE (Wayland) | `krfb-virtualmonitor` / KWin 虚拟输出 | 待做 |
+| Linux · X11 | `xrandr` 虚拟输出 + 裁剪采集 | 待做，依赖显卡驱动 |
+| Windows | Indirect Display Driver (IddCx) | 待做，需随包签名驱动 |
+| macOS | `CGVirtualDisplay` | 待做，私有 API，非 App Store 分发 |
 | Android / iOS | 不支持作为扩展主机 | 仅镜像 |
 
-M1 中「扩展」入口已保留：在不支持的平台上降级为镜像并明确提示。
+**GNOME 上的工作方式**：会话建立后副屏上报自己的屏幕分辨率，主机据此向 Mutter 申请一块
+同尺寸的虚拟显示器（由一条极简的 GStreamer 管线 `pipewiresrc ! fakesink` 充当消费者来
+确定尺寸并维持其存活），随后像采集普通显示器一样采集它；会话结束即销毁。
+在系统选屏对话框里需要手动选中这块新显示器——这是 Wayland 的安全模型所要求的一步。
+依赖 GStreamer 的 PipeWire 插件（GNOME 桌面默认自带）。
+
+在尚未支持的主机平台上，「扩展」降级为镜像并明确提示。
 
 ### M3 · 体验增强
 
@@ -86,7 +93,7 @@ M1 中「扩展」入口已保留：在不支持的平台上降级为镜像并�
                 │ flutter_rust_bridge            │ 信令 (SDP / ICE)
 ┌───────────────┴──────────── Rust core ─────────┴────────────────┐
 │  控制面：身份 · 发现 (mDNS) · 配对 (SPAKE2) · 加密信道 · 会话机   │
-│  (M2) 虚拟显示器 · 低延迟采集编码管线                             │
+│  (后续) 低延迟采集编码管线                                       │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -99,8 +106,9 @@ M1 中「扩展」入口已保留：在不支持的平台上降级为镜像并�
   纯 Rust 实现无系统依赖，可脱离 UI 做单元 / 集成测试。
 - **契约即边界**：`rust/src/api/` 是唯一的桥接面（见 `types.rs`、`node.rs`），
   Rust 只把信令当作不透明字符串转运，媒体协商细节全部留在 Dart。
-- M2 的虚拟显示器与自研采集管线进入 Rust 后，可作为标准 WebRTC 发送端与现有
-  接收端互通，无需改动副屏侧。
+- 虚拟显示器属于平台胶水，放在 Dart 侧的 `VirtualDisplayProvider` 之后；后续若在
+  Rust 中自研低延迟采集编码管线，可作为标准 WebRTC 发送端与现有接收端互通，
+  无需改动副屏侧。
 
 ### 控制面协议
 
