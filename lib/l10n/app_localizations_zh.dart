@@ -114,10 +114,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get modeMirrorDescription => '副屏显示与这台设备相同的画面。';
 
   @override
-  String get modeExtendUnavailable => '扩展屏即将支持，本次将以镜像方式投屏。';
+  String get modeExtendUnavailable => '这台设备暂时无法创建虚拟显示器，本次将以镜像方式投屏。';
 
   @override
-  String get comingSoon => '即将支持';
+  String get comingSoon => '暂不可用';
 
   @override
   String get connectQualityLabel => '画质';
@@ -225,6 +225,17 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get hostSelectingSource => '请在系统对话框中选择要共享的屏幕。';
+
+  @override
+  String hostSelectingVirtualDisplay(String label) {
+    return '已新增一块虚拟显示器。请在系统对话框中选择它（$label）。';
+  }
+
+  @override
+  String get hostPreparingDisplay => '正在创建虚拟显示器…';
+
+  @override
+  String get noticeExtendFallback => '未能创建虚拟显示器，已改为镜像投屏。';
 
   @override
   String get hostConnecting => '正在建立连接…';

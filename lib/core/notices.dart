@@ -22,6 +22,13 @@ final class CaptureFailedNotice extends AppNotice {
   const CaptureFailedNotice();
 }
 
+/// Extend was requested but no virtual monitor could be created; the session
+/// mirrors instead.
+final class ExtendFallbackNotice extends AppNotice {
+  /// Creates the notice.
+  const ExtendFallbackNotice();
+}
+
 /// A trusted host was accepted without asking.
 final class AutoAcceptedNotice extends AppNotice {
   /// Creates the notice.

@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/media/quality.dart';
 import '../../core/node/local_node.dart';
 import '../../core/node/node_service.dart';
+import '../../core/platform/virtual_display.dart';
 import '../../core/prefs/preferences.dart';
 
 /// Where the host-side connect flow is.
@@ -49,7 +50,8 @@ class OutgoingRequest {
 
   final DeviceInfo peer;
 
-  /// What the user picked. See [effectiveMode].
+  /// What the user picked. Extend is requested only where the host can
+  /// create a virtual monitor; elsewhere the session mirrors.
   final ShareMode mode;
   final QualityPreset quality;
   final OutgoingPhase phase;
@@ -59,12 +61,6 @@ class OutgoingRequest {
   /// Number of wrong PINs so far; drives the shake.
   final int rejections;
   final OutgoingFailure? failure;
-
-  /// True extended displays arrive in M2; until then every session mirrors.
-  static const extendSupported = false;
-
-  /// The mode actually requested from the peer.
-  ShareMode get effectiveMode => extendSupported ? mode : ShareMode.mirror;
 
   /// Copies with changes.
   OutgoingRequest copyWith({
@@ -133,7 +129,9 @@ class OutgoingRequestNotifier extends Notifier<OutgoingRequest?> {
       phase: OutgoingPhase.requesting,
     );
     try {
-      final id = await _service.requestSession(s.peer.id, s.effectiveMode);
+      final canExtend = await ref.read(extendSupportedProvider.future);
+      final mode = canExtend ? s.mode : ShareMode.mirror;
+      final id = await _service.requestSession(s.peer.id, mode);
       if (!ref.mounted || state?.phase != OutgoingPhase.requesting) {
         await _service.closeSession(id);
         return;

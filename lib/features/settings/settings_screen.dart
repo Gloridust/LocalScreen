@@ -10,6 +10,7 @@ import '../../core/node/local_node.dart';
 import '../../core/node/node_service.dart';
 import '../../core/platform/autostart.dart';
 import '../../core/platform/device_profile.dart';
+import '../../core/platform/virtual_display.dart';
 import '../../core/prefs/preferences.dart';
 import '../pairing/connect_sheet.dart';
 import 'trusted_devices_controller.dart';
@@ -177,7 +178,10 @@ class _ConnectionGroup extends ConsumerWidget {
         _choiceRow<ShareMode>(
           context,
           title: l10n.defaultMode,
-          segments: modeSegments(l10n),
+          segments: modeSegments(
+            l10n,
+            extendSupported: ref.watch(extendSupportedProvider).value ?? false,
+          ),
           value: prefs.defaultMode,
           onChanged: (m) => notifier.update((p) => p.copyWith(defaultMode: m)),
         ),

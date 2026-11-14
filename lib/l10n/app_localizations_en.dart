@@ -126,10 +126,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get modeExtendUnavailable =>
-      'Extend is coming soon. This time your screen will be mirrored.';
+      'This device can\'t create a virtual display yet. Your screen will be mirrored instead.';
 
   @override
-  String get comingSoon => 'Soon';
+  String get comingSoon => 'Unavailable';
 
   @override
   String get connectQualityLabel => 'Quality';
@@ -245,6 +245,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hostSelectingSource => 'Choose the screen to share in the system dialog.';
+
+  @override
+  String hostSelectingVirtualDisplay(String label) {
+    return 'A virtual display was added. Pick it ($label) in the system dialog.';
+  }
+
+  @override
+  String get hostPreparingDisplay => 'Creating the virtual display…';
+
+  @override
+  String get noticeExtendFallback => 'Couldn\'t create a virtual display. Mirroring instead.';
 
   @override
   String get hostConnecting => 'Connecting…';

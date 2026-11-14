@@ -106,6 +106,10 @@ final class ControlSignal extends SignalMessage {
   /// The host switched quality preset; [value] is the preset name.
   static const quality = 'quality';
 
+  /// The display reports its screen size; [value] is `WIDTHxHEIGHT` in
+  /// physical pixels. The host sizes its virtual monitor from it.
+  static const screen = 'screen';
+
   final String action;
   final String? value;
 

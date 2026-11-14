@@ -81,6 +81,7 @@ class _SessionCoordinatorState extends ConsumerState<SessionCoordinator> {
         CloseReason.localHangup => (l10n.noticeEndedLocal, LsStatus.idle),
       },
       CaptureFailedNotice() => (l10n.noticeCaptureFailed, LsStatus.error),
+      ExtendFallbackNotice() => (l10n.noticeExtendFallback, LsStatus.warning),
       AutoAcceptedNotice(:final peerName) => (
         l10n.noticeAutoAccepted(peerName),
         LsStatus.connected,

@@ -17,6 +17,8 @@ import '../core/node/rust_node_service.dart';
 import '../core/platform/autostart.dart';
 import '../core/platform/device_profile.dart';
 import '../core/platform/immersive.dart';
+import '../core/platform/mutter_virtual_display.dart';
+import '../core/platform/virtual_display.dart';
 import '../core/prefs/preferences.dart';
 import '../features/session/screen_source_picker.dart';
 import 'app.dart';
@@ -67,6 +69,8 @@ Future<void> bootstrap(List<String> args) async {
         nodeServiceProvider.overrideWithValue(node),
         mediaEngineProvider.overrideWithValue(media),
         autostartServiceProvider.overrideWithValue(autostart),
+        if (!fakeMode && profile.platform == 'linux')
+          virtualDisplayProvider.overrideWithValue(MutterVirtualDisplayProvider()),
       ],
       child: const LocalScreenApp(),
     ),

@@ -300,13 +300,13 @@ abstract class AppLocalizations {
   /// No description provided for @modeExtendUnavailable.
   ///
   /// In zh, this message translates to:
-  /// **'扩展屏即将支持，本次将以镜像方式投屏。'**
+  /// **'这台设备暂时无法创建虚拟显示器，本次将以镜像方式投屏。'**
   String get modeExtendUnavailable;
 
   /// No description provided for @comingSoon.
   ///
   /// In zh, this message translates to:
-  /// **'即将支持'**
+  /// **'暂不可用'**
   String get comingSoon;
 
   /// No description provided for @connectQualityLabel.
@@ -494,6 +494,24 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'请在系统对话框中选择要共享的屏幕。'**
   String get hostSelectingSource;
+
+  /// No description provided for @hostSelectingVirtualDisplay.
+  ///
+  /// In zh, this message translates to:
+  /// **'已新增一块虚拟显示器。请在系统对话框中选择它（{label}）。'**
+  String hostSelectingVirtualDisplay(String label);
+
+  /// No description provided for @hostPreparingDisplay.
+  ///
+  /// In zh, this message translates to:
+  /// **'正在创建虚拟显示器…'**
+  String get hostPreparingDisplay;
+
+  /// No description provided for @noticeExtendFallback.
+  ///
+  /// In zh, this message translates to:
+  /// **'未能创建虚拟显示器，已改为镜像投屏。'**
+  String get noticeExtendFallback;
 
   /// No description provided for @hostConnecting.
   ///

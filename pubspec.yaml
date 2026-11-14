@@ -51,6 +51,7 @@ dependencies:
     sdk: flutter
   package_info_plus: ^10.2.2
   win32_registry: ^3.0.3
+  dbus: ^0.8.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

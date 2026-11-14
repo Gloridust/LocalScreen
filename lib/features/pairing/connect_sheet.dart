@@ -7,6 +7,7 @@ import '../../app/theme/lumen.dart';
 import '../../core/media/quality.dart';
 import '../../core/node/device_labels.dart';
 import '../../core/node/node_service.dart';
+import '../../core/platform/virtual_display.dart';
 import 'outgoing_request.dart';
 import 'widgets/inline_note.dart';
 
@@ -129,13 +130,14 @@ List<LsSegment<QualityPreset>> qualitySegments(AppLocalizations l10n) => [
   for (final q in QualityPreset.values) LsSegment(value: q, label: qualityLabel(l10n, q)),
 ];
 
-/// The share modes as segments; Extend carries a "soon" badge in M1.
-List<LsSegment<ShareMode>> modeSegments(AppLocalizations l10n) => [
+/// The share modes as segments. Where the host cannot create a virtual
+/// monitor, Extend carries a badge saying it falls back to mirroring.
+List<LsSegment<ShareMode>> modeSegments(AppLocalizations l10n, {required bool extendSupported}) => [
   LsSegment(
     value: ShareMode.extend,
     label: l10n.modeExtend,
     icon: Icons.add_to_queue_rounded,
-    badge: OutgoingRequest.extendSupported ? null : l10n.comingSoon,
+    badge: extendSupported ? null : l10n.comingSoon,
   ),
   LsSegment(value: ShareMode.mirror, label: l10n.modeMirror, icon: Icons.screen_share_outlined),
 ];
@@ -154,6 +156,7 @@ class _OptionsStage extends ConsumerWidget {
     final busy = request.phase == OutgoingPhase.requesting;
     final failed = request.phase == OutgoingPhase.failed;
     final editable = !busy;
+    final extendSupported = ref.watch(extendSupportedProvider).value ?? false;
     final modeDescription = request.mode == ShareMode.extend
         ? l10n.modeExtendDescription
         : l10n.modeMirrorDescription;
@@ -176,13 +179,13 @@ class _OptionsStage extends ConsumerWidget {
       children: [
         _FieldLabel(l10n.connectModeLabel),
         LsSegmented<ShareMode>(
-          segments: modeSegments(l10n),
+          segments: modeSegments(l10n, extendSupported: extendSupported),
           value: request.mode,
           onChanged: editable ? notifier.setMode : null,
         ),
         SizedBox(height: ls.space.sm),
         Text(modeDescription, style: ls.text.caption.copyWith(color: c.textSecondary)),
-        if (request.mode == ShareMode.extend && !OutgoingRequest.extendSupported) ...[
+        if (request.mode == ShareMode.extend && !extendSupported) ...[
           SizedBox(height: ls.space.md),
           InlineNote(icon: Icons.info_outline_rounded, text: l10n.modeExtendUnavailable),
         ],

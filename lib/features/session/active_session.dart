@@ -9,6 +9,7 @@ import '../../core/media/quality.dart';
 import '../../core/node/local_node.dart';
 import '../../core/node/node_service.dart';
 import '../../core/notices.dart';
+import '../../core/platform/virtual_display.dart';
 import '../../core/prefs/preferences.dart';
 import '../pairing/outgoing_request.dart';
 import 'session_controller.dart';
@@ -82,6 +83,9 @@ class ActiveSessionNotifier extends Notifier<SessionController?> {
       quality: quality,
       media: ref.read(mediaEngineProvider).create(),
       node: _service,
+      virtualDisplays: ref.read(virtualDisplayProvider),
+      localScreen: ScreenSize.ofPrimaryDisplay(),
+      onExtendFallback: () => ref.read(noticeProvider.notifier).post(const ExtendFallbackNotice()),
       onMediaFailure: (failure) {
         if (state != controller) return;
         if (failure == MediaFailure.capture) {

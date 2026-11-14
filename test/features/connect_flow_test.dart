@@ -24,7 +24,7 @@ void main() {
     // Extend is selectable but explained.
     await tester.tap(find.text('扩展'));
     await tester.pump();
-    expect(find.text('扩展屏即将支持，本次将以镜像方式投屏。'), findsOneWidget);
+    expect(find.text('这台设备暂时无法创建虚拟显示器，本次将以镜像方式投屏。'), findsOneWidget);
 
     await tester.tap(find.text('开始投屏'));
     await _wait(tester, const Duration(seconds: 1));
