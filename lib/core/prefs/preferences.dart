@@ -19,6 +19,8 @@ class Preferences {
     this.themeMode = ThemeMode.system,
     this.locale,
     this.launchAtStartup = false,
+    this.autoCheckUpdates = true,
+    this.skippedUpdate,
   });
 
   /// Custom device name; null means the platform default.
@@ -37,6 +39,12 @@ class Preferences {
   /// Start at login (desktop only); mirrors the OS autostart entry.
   final bool launchAtStartup;
 
+  /// Look for a new release on start and every hour.
+  final bool autoCheckUpdates;
+
+  /// Version whose announcement the user dismissed; null if none.
+  final String? skippedUpdate;
+
   /// Returns a copy with the given fields replaced. Use [clearDeviceName] /
   /// [clearLocale] to reset the nullable fields.
   Preferences copyWith({
@@ -50,6 +58,8 @@ class Preferences {
     Locale? locale,
     bool clearLocale = false,
     bool? launchAtStartup,
+    bool? autoCheckUpdates,
+    String? skippedUpdate,
   }) {
     return Preferences(
       deviceName: clearDeviceName ? null : deviceName ?? this.deviceName,
@@ -60,6 +70,8 @@ class Preferences {
       themeMode: themeMode ?? this.themeMode,
       locale: clearLocale ? null : locale ?? this.locale,
       launchAtStartup: launchAtStartup ?? this.launchAtStartup,
+      autoCheckUpdates: autoCheckUpdates ?? this.autoCheckUpdates,
+      skippedUpdate: skippedUpdate ?? this.skippedUpdate,
     );
   }
 }
@@ -79,6 +91,8 @@ class PreferencesStore {
   static const _themeMode = 'ls.themeMode';
   static const _locale = 'ls.locale';
   static const _launchAtStartup = 'ls.launchAtStartup';
+  static const _autoCheckUpdates = 'ls.autoCheckUpdates';
+  static const _skippedUpdate = 'ls.skippedUpdate';
 
   /// Loads the stored preferences, using defaults for missing keys.
   Preferences load() {
@@ -95,6 +109,8 @@ class PreferencesStore {
       themeMode: byName(ThemeMode.values, prefs.getString(_themeMode), ThemeMode.system),
       locale: localeTag == null || localeTag.isEmpty ? null : Locale(localeTag),
       launchAtStartup: prefs.getBool(_launchAtStartup) ?? false,
+      autoCheckUpdates: prefs.getBool(_autoCheckUpdates) ?? true,
+      skippedUpdate: prefs.getString(_skippedUpdate),
     );
   }
 
@@ -111,6 +127,11 @@ class PreferencesStore {
       prefs.setBool(_autoAccept, p.autoAcceptTrusted),
       prefs.setString(_themeMode, p.themeMode.name),
       prefs.setBool(_launchAtStartup, p.launchAtStartup),
+      prefs.setBool(_autoCheckUpdates, p.autoCheckUpdates),
+      if (p.skippedUpdate == null)
+        prefs.remove(_skippedUpdate)
+      else
+        prefs.setString(_skippedUpdate, p.skippedUpdate!),
       if (p.locale == null)
         prefs.remove(_locale)
       else

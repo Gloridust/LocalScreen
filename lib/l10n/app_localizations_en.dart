@@ -394,7 +394,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutVersion => 'Version';
 
   @override
-  String get aboutPrivacy => 'Local network only: no accounts, no cloud, no ads.';
+  String get aboutPrivacy => 'Casting stays on your local network: no accounts, no cloud, no ads.';
 
   @override
   String get aboutDeviceId => 'Device ID';
@@ -419,4 +419,130 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutLogsOpen => 'Open folder';
+
+  @override
+  String get sectionUpdates => 'Updates';
+
+  @override
+  String get autoCheckUpdates => 'Check for updates automatically';
+
+  @override
+  String get autoCheckUpdatesDescription =>
+      'Asks GitHub for a new release at launch and every hour. Nothing about your devices is sent.';
+
+  @override
+  String get checkForUpdates => 'Check for updates';
+
+  @override
+  String get checkNow => 'Check now';
+
+  @override
+  String get updateStatusNever => 'Not checked yet';
+
+  @override
+  String get updateStatusChecking => 'Checking…';
+
+  @override
+  String updateStatusUpToDate(String time) {
+    return 'Up to date · checked at $time';
+  }
+
+  @override
+  String updateStatusAvailable(String version) {
+    return 'Version $version is available';
+  }
+
+  @override
+  String get updateStatusFailed => 'Couldn\'t check. Make sure you\'re online and try again.';
+
+  @override
+  String updateBannerTitle(String version) {
+    return 'LocalScreen $version is available';
+  }
+
+  @override
+  String updateBannerSubtitle(String current) {
+    return 'You have $current';
+  }
+
+  @override
+  String get updateAction => 'Update';
+
+  @override
+  String get updateLater => 'Skip this version';
+
+  @override
+  String updateDownloading(int percent) {
+    return 'Downloading $percent%';
+  }
+
+  @override
+  String get updateInstalling => 'Installing…';
+
+  @override
+  String updateInstalledTitle(String version) {
+    return '$version is installed';
+  }
+
+  @override
+  String get updateInstalledSubtitle => 'Restart LocalScreen to use the new version.';
+
+  @override
+  String get updateRestart => 'Restart';
+
+  @override
+  String get updateOpenedTitle => 'Finish the update in the installer';
+
+  @override
+  String get updateOpenedSubtitleMac =>
+      'Drag LocalScreen into Applications to replace the old version, then reopen it.';
+
+  @override
+  String updateSheetMeta(String current, String date) {
+    return 'You have $current · released $date';
+  }
+
+  @override
+  String get updateWhatsNew => 'What\'s new';
+
+  @override
+  String updateInstallButton(String size) {
+    return 'Download and install · $size';
+  }
+
+  @override
+  String get updateOpenPage => 'Open download page';
+
+  @override
+  String get updateViewRelease => 'Full release notes';
+
+  @override
+  String get updateHintLinux => 'You\'ll be asked for your password to install it.';
+
+  @override
+  String get updateHintWindows => 'The installer closes LocalScreen and reopens it when done.';
+
+  @override
+  String get updateHintMac =>
+      'The disk image opens when the download finishes; drag LocalScreen into Applications.';
+
+  @override
+  String get updateHintManual =>
+      'LocalScreen can\'t install updates by itself on this device. Get the new version from the download page.';
+
+  @override
+  String get updateHintSession => 'A session is running; update after it ends.';
+
+  @override
+  String get updateFailedNetwork => 'The download failed. Make sure you\'re online and try again.';
+
+  @override
+  String get updateFailedChecksum => 'The download didn\'t match its checksum and was discarded.';
+
+  @override
+  String get updateFailedInstall =>
+      'The install didn\'t finish. Try again, or install it from the download page.';
+
+  @override
+  String get updateFailedNoPackage => 'This release has no package for this device.';
 }

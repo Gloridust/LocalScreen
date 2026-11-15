@@ -63,6 +63,8 @@ jobs:
             libunwind-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
             dpkg-dev fakeroot librsvg2-bin
       - run: flutter build linux --release
+      # The package file names end in suffixes the in-app updater looks for
+      # (lib/core/update/release.dart); renaming them strands old versions.
       - name: Package (.deb)
         run: packaging/linux/build_deb.sh dist
       - uses: actions/upload-artifact@v4

@@ -370,7 +370,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get aboutVersion => '版本';
 
   @override
-  String get aboutPrivacy => '全程只走局域网：无账号、无云端、无广告。';
+  String get aboutPrivacy => '投屏全程只走局域网：无账号、无云端、无广告。';
 
   @override
   String get aboutDeviceId => '设备 ID';
@@ -392,4 +392,125 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get aboutLogsOpen => '打开文件夹';
+
+  @override
+  String get sectionUpdates => '更新';
+
+  @override
+  String get autoCheckUpdates => '自动检查更新';
+
+  @override
+  String get autoCheckUpdatesDescription => '启动后及每小时向 GitHub 查询一次新版本，不发送任何设备信息。';
+
+  @override
+  String get checkForUpdates => '检查更新';
+
+  @override
+  String get checkNow => '立即检查';
+
+  @override
+  String get updateStatusNever => '尚未检查';
+
+  @override
+  String get updateStatusChecking => '正在检查…';
+
+  @override
+  String updateStatusUpToDate(String time) {
+    return '已是最新版本 · $time 检查';
+  }
+
+  @override
+  String updateStatusAvailable(String version) {
+    return '发现新版本 $version';
+  }
+
+  @override
+  String get updateStatusFailed => '检查失败，请确认网络后重试。';
+
+  @override
+  String updateBannerTitle(String version) {
+    return '新版本 $version 可用';
+  }
+
+  @override
+  String updateBannerSubtitle(String current) {
+    return '当前 $current';
+  }
+
+  @override
+  String get updateAction => '更新';
+
+  @override
+  String get updateLater => '忽略此版本';
+
+  @override
+  String updateDownloading(int percent) {
+    return '正在下载 $percent%';
+  }
+
+  @override
+  String get updateInstalling => '正在安装…';
+
+  @override
+  String updateInstalledTitle(String version) {
+    return '$version 已安装';
+  }
+
+  @override
+  String get updateInstalledSubtitle => '重启 LocalScreen 即可使用新版本。';
+
+  @override
+  String get updateRestart => '重启';
+
+  @override
+  String get updateOpenedTitle => '请在安装程序中完成更新';
+
+  @override
+  String get updateOpenedSubtitleMac => '把 LocalScreen 拖入\"应用程序\"替换旧版，然后重新打开。';
+
+  @override
+  String updateSheetMeta(String current, String date) {
+    return '当前 $current · 发布于 $date';
+  }
+
+  @override
+  String get updateWhatsNew => '更新内容';
+
+  @override
+  String updateInstallButton(String size) {
+    return '下载并安装 · $size';
+  }
+
+  @override
+  String get updateOpenPage => '前往下载页';
+
+  @override
+  String get updateViewRelease => '查看完整说明';
+
+  @override
+  String get updateHintLinux => '安装时会请你输入系统密码。';
+
+  @override
+  String get updateHintWindows => '安装程序会先关闭 LocalScreen，完成后自动重新打开。';
+
+  @override
+  String get updateHintMac => '下载后会打开磁盘映像，把 LocalScreen 拖入\"应用程序\"即可。';
+
+  @override
+  String get updateHintManual => '这台设备上的 LocalScreen 不能自行安装更新，请从下载页获取新版本。';
+
+  @override
+  String get updateHintSession => '投屏进行中，结束后再更新。';
+
+  @override
+  String get updateFailedNetwork => '下载失败，请确认网络后重试。';
+
+  @override
+  String get updateFailedChecksum => '下载的文件没有通过校验，已丢弃。';
+
+  @override
+  String get updateFailedInstall => '安装没有完成，请重试或从下载页手动安装。';
+
+  @override
+  String get updateFailedNoPackage => '这个版本没有适用于本机的安装包。';
 }

@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/log.dart';
@@ -25,6 +26,11 @@ import '../core/platform/linux/mutter_monitor_capture.dart';
 import '../core/platform/linux/mutter_virtual_display.dart';
 import '../core/platform/virtual_display.dart';
 import '../core/prefs/preferences.dart';
+import '../core/update/release.dart';
+import '../core/update/update_controller.dart';
+import '../core/update/update_installer.dart';
+import '../core/update/update_source.dart';
+import '../core/update/version.dart';
 import '../features/session/screen_source_picker.dart';
 import 'app.dart';
 import 'l10n.dart';
@@ -58,6 +64,10 @@ Future<void> bootstrap(List<String> args) async {
       ? DesktopAutostartService()
       : const UnsupportedAutostartService();
   await reconcileAutostart(autostart, PreferencesStore(prefs));
+  final version = AppVersion.tryParse(package.version);
+  final updates = Directory(
+    '${(await getTemporaryDirectory()).path}${Platform.pathSeparator}localscreen-updates',
+  );
 
   final NodeService node;
   final MediaEngine media;
@@ -93,6 +103,22 @@ Future<void> bootstrap(List<String> args) async {
           virtualDisplayProvider.overrideWithValue(
             MutterVirtualDisplayProvider(placements: PreferencesPlacementStore(prefs)),
           ),
+        appVersionProvider.overrideWithValue(version ?? AppVersion.unknown),
+        updateDirectoryProvider.overrideWithValue(updates),
+        ...switch ((fakeMode, version)) {
+          (true, _) => [
+            updateSourceProvider.overrideWithValue(FakeUpdateSource(_demoRelease)),
+            updateInstallerProvider.overrideWithValue(FakeUpdateInstaller()),
+          ],
+          // Without a version there is nothing to compare against.
+          (false, null) => const [],
+          (false, _?) => [
+            updateSourceProvider.overrideWithValue(GitHubUpdateSource()),
+            updateInstallerProvider.overrideWithValue(
+              UpdateInstaller.forPlatform(profile.platform),
+            ),
+          ],
+        },
       ],
       child: const LocalScreenApp(),
     ),
@@ -104,6 +130,25 @@ AppLocalizations _strings(SharedPreferences prefs) {
   final chosen = PreferencesStore(prefs).load().locale;
   return lookupAppLocalizations(chosen ?? resolveAppLocale(PlatformDispatcher.instance.locales));
 }
+
+/// The release the `LS_FAKE` demo announces.
+final _demoRelease = AppRelease(
+  version: const AppVersion(9, 9, 0),
+  page: Uri.parse('https://github.com/Gloridust/LocalScreen/releases'),
+  publishedAt: DateTime(2026, 11, 16),
+  notes: '''
+## Changes
+- Faster reconnects to trusted devices
+- Smoother picture on busy Wi-Fi
+''',
+  assets: [
+    ReleaseAsset(
+      name: 'localscreen_9.9.0_amd64.deb',
+      url: Uri.parse('https://example.invalid/localscreen_9.9.0_amd64.deb'),
+      size: 15900000,
+    ),
+  ],
+);
 
 void _scheduleFakeIncoming(FakeNodeService fake) {
   if (fakeIncoming.isEmpty) return;

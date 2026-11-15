@@ -215,12 +215,106 @@
   "languageSystem": "跟随系统",
   "sectionAbout": "关于",
   "aboutVersion": "版本",
-  "aboutPrivacy": "全程只走局域网：无账号、无云端、无广告。",
+  "aboutPrivacy": "投屏全程只走局域网：无账号、无云端、无广告。",
   "aboutDeviceId": "设备 ID",
   "launchAtStartup": "开机自启",
   "launchAtStartupDescription": "登录系统后自动启动，在后台等待连接。",
   "sessionWaitingHint": "对方电脑还在准备画面。如果那边弹出了选择屏幕的窗口，请在那里选好要共享的屏幕。",
   "aboutLogs": "诊断日志",
   "aboutLogsDescription": "只保存在本机，遇到问题时可以发给开发者。",
-  "aboutLogsOpen": "打开文件夹"
+  "aboutLogsOpen": "打开文件夹",
+  "sectionUpdates": "更新",
+  "autoCheckUpdates": "自动检查更新",
+  "autoCheckUpdatesDescription": "启动后及每小时向 GitHub 查询一次新版本，不发送任何设备信息。",
+  "checkForUpdates": "检查更新",
+  "checkNow": "立即检查",
+  "updateStatusNever": "尚未检查",
+  "updateStatusChecking": "正在检查…",
+  "updateStatusUpToDate": "已是最新版本 · {time} 检查",
+  "@updateStatusUpToDate": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "updateStatusAvailable": "发现新版本 {version}",
+  "@updateStatusAvailable": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "updateStatusFailed": "检查失败，请确认网络后重试。",
+  "updateBannerTitle": "新版本 {version} 可用",
+  "@updateBannerTitle": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "updateBannerSubtitle": "当前 {current}",
+  "@updateBannerSubtitle": {
+    "placeholders": {
+      "current": {
+        "type": "String"
+      }
+    }
+  },
+  "updateAction": "更新",
+  "updateLater": "忽略此版本",
+  "updateDownloading": "正在下载 {percent}%",
+  "@updateDownloading": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "updateInstalling": "正在安装…",
+  "updateInstalledTitle": "{version} 已安装",
+  "@updateInstalledTitle": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "updateInstalledSubtitle": "重启 LocalScreen 即可使用新版本。",
+  "updateRestart": "重启",
+  "updateOpenedTitle": "请在安装程序中完成更新",
+  "updateOpenedSubtitleMac": "把 LocalScreen 拖入\"应用程序\"替换旧版，然后重新打开。",
+  "updateSheetMeta": "当前 {current} · 发布于 {date}",
+  "@updateSheetMeta": {
+    "placeholders": {
+      "current": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "updateWhatsNew": "更新内容",
+  "updateInstallButton": "下载并安装 · {size}",
+  "@updateInstallButton": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "updateOpenPage": "前往下载页",
+  "updateViewRelease": "查看完整说明",
+  "updateHintLinux": "安装时会请你输入系统密码。",
+  "updateHintWindows": "安装程序会先关闭 LocalScreen，完成后自动重新打开。",
+  "updateHintMac": "下载后会打开磁盘映像，把 LocalScreen 拖入\"应用程序\"即可。",
+  "updateHintManual": "这台设备上的 LocalScreen 不能自行安装更新，请从下载页获取新版本。",
+  "updateHintSession": "投屏进行中，结束后再更新。",
+  "updateFailedNetwork": "下载失败，请确认网络后重试。",
+  "updateFailedChecksum": "下载的文件没有通过校验，已丢弃。",
+  "updateFailedInstall": "安装没有完成，请重试或从下载页手动安装。",
+  "updateFailedNoPackage": "这个版本没有适用于本机的安装包。"
 }

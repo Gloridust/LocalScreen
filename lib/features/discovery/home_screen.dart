@@ -11,6 +11,7 @@ import '../../core/node/node_service.dart';
 import '../pairing/connect_sheet.dart';
 import '../pairing/outgoing_request.dart';
 import '../settings/settings_screen.dart';
+import '../update/update_banner.dart';
 import 'manual_connect_sheet.dart';
 import 'peers_controller.dart';
 import 'widgets/discovery_empty_state.dart';
@@ -110,6 +111,7 @@ class _ExpandedHome extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      UpdateBanner(padding: EdgeInsets.only(bottom: ls.space.xl)),
                       NearbyHeader(count: peers.length, large: true, showSubtitle: true),
                       SizedBox(height: ls.space.xl),
                       Expanded(
@@ -172,6 +174,12 @@ class _CompactHome extends StatelessWidget {
         SliverPadding(
           padding: pad(top: ls.space.sm, bottom: ls.space.xl),
           sliver: const SliverToBoxAdapter(child: LocalDeviceHeader()),
+        ),
+        SliverPadding(
+          padding: pad(),
+          sliver: SliverToBoxAdapter(
+            child: UpdateBanner(padding: EdgeInsets.only(bottom: ls.space.xl)),
+          ),
         ),
         SliverPadding(
           padding: pad(bottom: ls.space.lg),
