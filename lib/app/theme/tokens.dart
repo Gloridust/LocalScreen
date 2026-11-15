@@ -328,18 +328,9 @@ class LsTokens extends ThemeExtension<LsTokens> {
   final LsTypography text;
   final LsMotion motion;
 
-  /// Signature `accent → accentAlt` gradient at 135°. Only for the local orb,
-  /// primary buttons and the focused PIN cell.
-  LinearGradient get signatureGradient => LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [colors.accent, colors.accentAlt],
-  );
-
-  /// The "active" glow: accent at 24 % with a 32 px blur.
-  List<BoxShadow> get glow => [
-    BoxShadow(color: colors.accent.withValues(alpha: 0.24), blurRadius: 32),
-  ];
+  /// [colors.accent] as it looks under the pointer or a press: a step
+  /// towards the text colour, so it reads as lit in both themes.
+  Color get accentHover => Color.lerp(colors.accent, colors.textPrimary, 0.12)!;
 
   @override
   LsTokens copyWith({LsColors? colors, List<BoxShadow>? floatingShadow}) {

@@ -202,21 +202,17 @@ class _PinCell extends StatelessWidget {
       ),
     );
     if (active) {
-      // Focused cell: signature-gradient ring plus the soft accent glow.
+      // Focused cell: a solid accent ring.
       return Container(
         width: width,
         height: height,
-        padding: EdgeInsets.all(stroke),
+        alignment: Alignment.center,
         decoration: BoxDecoration(
-          gradient: ls.signatureGradient,
+          color: fill,
           borderRadius: BorderRadius.circular(r),
-          boxShadow: ls.glow,
+          border: Border.all(color: c.accent, width: stroke),
         ),
-        child: Container(
-          alignment: Alignment.center,
-          decoration: BoxDecoration(color: fill, borderRadius: BorderRadius.circular(r - stroke)),
-          child: content,
-        ),
+        child: content,
       );
     }
     return AnimatedContainer(
