@@ -158,7 +158,7 @@ docs/             PLAN.md · DESIGN.md
 | iOS / iPadOS | ✓ | 需 Broadcast Extension（M3） | 未构建 | 待真机验证 |
 
 每次推送都会由 GitHub Actions（`.github/workflows/build.yml`）跑静态检查与测试，并构建
-Linux / Android / Windows / macOS 安装包，可在对应的 workflow 运行页面下载。
+Linux（.deb）/ Android（.apk）/ Windows（安装程序）/ macOS（.dmg）安装包；推送 `v*` 标签时自动附到 Release。
 
 **已在开发机（Ubuntu 26.04）实测**
 
