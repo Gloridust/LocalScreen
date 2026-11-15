@@ -62,6 +62,10 @@ abstract class MediaSession {
   /// Feeds an offer / answer / candidate from the peer.
   Future<void> receive(SignalMessage message);
 
+  /// Host: sends at most [framesPerSecond], on top of the preset's own
+  /// ceiling. The display asks for this when it cannot keep up.
+  Future<void> limitFramerate(int framesPerSecond);
+
   /// Host: applies a new preset to the running encoder.
   Future<void> applyQuality(QualityPreset quality);
 

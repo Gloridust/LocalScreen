@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/prefs/preferences.dart';
 import '../features/discovery/home_screen.dart';
 import 'l10n.dart';
+import 'motion_gate.dart';
 import 'router.dart';
 import 'session_coordinator.dart';
 import 'theme/lumen.dart';
@@ -30,6 +31,7 @@ class LocalScreenApp extends ConsumerWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       localeListResolutionCallback: (locales, _) => resolveAppLocale(locales),
+      builder: (context, child) => MotionGate(child: child!),
       home: const SessionCoordinator(child: HomeScreen()),
     );
   }

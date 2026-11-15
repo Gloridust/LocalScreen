@@ -16,6 +16,7 @@ class DeviceProfile {
     required this.kind,
     required this.platform,
     required this.storageDir,
+    this.memoryMb,
   });
 
   /// Name used until the user picks one.
@@ -28,6 +29,9 @@ class DeviceProfile {
   /// Writable directory for the identity key and trusted-device store.
   final String storageDir;
 
+  /// Physical RAM in megabytes; null when the platform does not say.
+  final int? memoryMb;
+
   /// Desktop platforms (window management, pointer-first).
   bool get isDesktop => const {'linux', 'windows', 'macos'}.contains(platform);
 
@@ -39,27 +43,33 @@ class DeviceProfile {
     final shortestSide = _shortestLogicalSide();
     var name = Platform.localHostname;
     var kind = DeviceKind.desktop;
+    int? memoryMb;
     try {
       switch (platform) {
         case 'android':
           final a = await info.androidInfo;
           name = a.name.isNotEmpty ? a.name : '${a.manufacturer} ${a.model}';
           kind = _mobileKind(shortestSide);
+          memoryMb = a.physicalRamSize;
         case 'ios':
           final i = await info.iosInfo;
           name = i.name;
           kind = _mobileKind(shortestSide);
+          memoryMb = i.physicalRamSize;
         case 'macos':
           final m = await info.macOsInfo;
           name = m.computerName;
           kind = m.model.toLowerCase().contains('book') ? DeviceKind.laptop : DeviceKind.desktop;
+          memoryMb = m.memorySize ~/ (1024 * 1024);
         case 'windows':
           final w = await info.windowsInfo;
           name = w.computerName;
+          memoryMb = w.systemMemoryInMegabytes;
         case 'linux':
           final l = await info.linuxInfo;
           name = Platform.localHostname.isNotEmpty ? Platform.localHostname : l.prettyName;
           kind = _hasBattery() ? DeviceKind.laptop : DeviceKind.desktop;
+          memoryMb = _linuxMemoryMb();
       }
     } catch (e) {
       debugPrint('device_info unavailable: $e');
@@ -69,7 +79,22 @@ class DeviceProfile {
       kind: kind,
       platform: platform,
       storageDir: storage.path,
+      memoryMb: memoryMb != null && memoryMb > 0 ? memoryMb : null,
     );
+  }
+
+  /// `MemTotal` of `/proc/meminfo`.
+  static int? _linuxMemoryMb() {
+    try {
+      for (final line in File('/proc/meminfo').readAsLinesSync()) {
+        if (!line.startsWith('MemTotal:')) continue;
+        final kb = int.tryParse(RegExp(r'\d+').firstMatch(line)?.group(0) ?? '');
+        return kb == null ? null : kb ~/ 1024;
+      }
+    } catch (_) {
+      // Not Linux enough.
+    }
+    return null;
   }
 
   static double _shortestLogicalSide() {

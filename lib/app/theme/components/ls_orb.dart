@@ -4,10 +4,24 @@ import 'package:flutter/widgets.dart';
 
 import '../context_ext.dart';
 
+/// Asks every resting [LsRipples] to play another burst: something happened
+/// that is worth a glance (the window came back, a device appeared).
+abstract final class LsAmbient {
+  /// Bumped by [pulse].
+  static final pulses = ValueNotifier<int>(0);
+
+  /// Plays one burst on all visible ripples.
+  static void pulse() => pulses.value++;
+}
+
 /// Ambient expanding rings that say "looking for / visible to others".
 ///
-/// Three rings loop every `motion.ambient`, a third of a cycle apart. They
-/// stop when [active] is false or the platform asks for reduced motion.
+/// Three rings, a third of a cycle apart. They play `motion.ambientCycles`
+/// cycles when they appear, become [active] or [LsAmbient.pulse] is called,
+/// then rest as still rings: an idle window must not keep redrawing. With
+/// [continuous] they loop for as long as they are shown, for short waits
+/// the user is watching. They do not move at all when [active] is false or
+/// the platform asks for reduced motion.
 class LsRipples extends StatefulWidget {
   /// Creates ripples around a core of diameter [coreSize].
   const LsRipples({
@@ -15,6 +29,7 @@ class LsRipples extends StatefulWidget {
     required this.coreSize,
     required this.color,
     this.active = true,
+    this.continuous = false,
     this.spread = 1.9,
     this.child,
   });
@@ -22,6 +37,9 @@ class LsRipples extends StatefulWidget {
   final double coreSize;
   final Color color;
   final bool active;
+
+  /// Loop without resting; only for waits that end on their own.
+  final bool continuous;
 
   /// Outer ring diameter as a multiple of [coreSize]; also the widget's size.
   final double spread;
@@ -34,6 +52,15 @@ class LsRipples extends StatefulWidget {
 class _LsRipplesState extends State<LsRipples> with SingleTickerProviderStateMixin {
   late final AnimationController _c = AnimationController(vsync: this);
 
+  /// Whether the rings were allowed to move at the last [_sync].
+  bool _ran = false;
+
+  @override
+  void initState() {
+    super.initState();
+    LsAmbient.pulses.addListener(_play);
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -43,22 +70,36 @@ class _LsRipplesState extends State<LsRipples> with SingleTickerProviderStateMix
   @override
   void didUpdateWidget(LsRipples old) {
     super.didUpdateWidget(old);
-    _sync();
+    _sync(restart: old.continuous != widget.continuous);
   }
 
-  void _sync() {
-    final ls = context.ls;
-    _c.duration = ls.motion.ambient.duration;
-    final run = widget.active && !context.reduceMotion;
-    if (run && !_c.isAnimating) {
-      _c.repeat();
+  bool get _mayRun => widget.active && !context.reduceMotion;
+
+  void _sync({bool restart = false}) {
+    _c.duration = context.ls.motion.ambient.duration;
+    final run = _mayRun;
+    if (run && (!_ran || restart)) {
+      _play();
     } else if (!run && _c.isAnimating) {
       _c.stop();
+    }
+    _ran = run;
+  }
+
+  /// Starts a burst (or the loop) unless one is already running.
+  void _play() {
+    if (!mounted || !_mayRun || _c.isAnimating) return;
+    if (widget.continuous) {
+      _c.repeat();
+    } else {
+      // Ends on a whole cycle, where the rings sit evenly spaced.
+      _c.repeat(count: context.ls.motion.ambientCycles);
     }
   }
 
   @override
   void dispose() {
+    LsAmbient.pulses.removeListener(_play);
     _c.dispose();
     super.dispose();
   }

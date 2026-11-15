@@ -103,6 +103,24 @@ void main() {
       });
     });
 
+    test('host slows down when the display asks for a lower pace', () {
+      fakeAsync((async) {
+        final c = controller(FakeVirtualDisplayProvider(), mode: ShareMode.mirror);
+        c.start();
+        async.elapse(const Duration(milliseconds: 50));
+        c.handleSignal(const ControlSignal(action: ControlSignal.pace, value: '20').encode());
+        async.flushMicrotasks();
+        expect(media.framerateLimit, 20);
+
+        // Garbage is ignored rather than applied.
+        c.handleSignal(const ControlSignal(action: ControlSignal.pace, value: 'fast').encode());
+        async.flushMicrotasks();
+        expect(media.framerateLimit, 20);
+        c.close();
+        async.flushMicrotasks();
+      });
+    });
+
     test('host falls back to mirroring when the monitor cannot be created', () {
       fakeAsync((async) {
         final displays = FakeVirtualDisplayProvider(failing: true);

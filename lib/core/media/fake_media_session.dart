@@ -85,6 +85,12 @@ class FakeMediaSession implements MediaSession {
   @override
   Future<void> receive(SignalMessage message) async {}
 
+  /// The frame-rate ceiling asked for, if any.
+  int? framerateLimit;
+
+  @override
+  Future<void> limitFramerate(int framesPerSecond) async => framerateLimit = framesPerSecond;
+
   @override
   Future<void> applyQuality(QualityPreset quality) async => _quality = quality;
 
