@@ -10,8 +10,17 @@
 
 ## 下载
 
-每次推送后，[GitHub Actions](https://github.com/Gloridust/LocalScreen/actions/workflows/build.yml) 会构建
-Linux / Android / Windows / macOS 安装包，在对应运行页面的 Artifacts 中下载。
+在 [Releases](https://github.com/Gloridust/LocalScreen/releases/latest) 下载对应平台的安装包：
+
+| 平台 | 安装包 | 安装 |
+|---|---|---|
+| Linux（Debian / Ubuntu） | `localscreen_<版本>_amd64.deb` | `sudo apt install ./localscreen_<版本>_amd64.deb` |
+| Android | `LocalScreen-<版本>-android.apk` | 直接安装 |
+| Windows | `LocalScreen-<版本>-windows-x64-setup.exe` | 运行安装程序 |
+| macOS | `LocalScreen-<版本>-macos.dmg` | 拖入“应用程序” |
+
+推送 `v*` 标签时，[GitHub Actions](https://github.com/Gloridust/LocalScreen/actions/workflows/build.yml)
+会构建这些安装包并附到对应的 Release。本地打 deb：`flutter build linux --release && packaging/linux/build_deb.sh`。
 
 ## 开发
 

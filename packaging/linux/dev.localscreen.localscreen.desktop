@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Name=LocalScreen
+GenericName=Second Screen
+GenericName[zh_CN]=副屏
+Comment=Turn any device on your LAN into a second screen
+Comment[zh_CN]=把局域网里的任意设备变成你的副屏
+Exec=localscreen
+Icon=dev.localscreen.localscreen
+Terminal=false
+Categories=Utility;
+Keywords=screen;display;monitor;cast;mirror;extend;
+StartupNotify=true
+StartupWMClass=dev.localscreen.localscreen

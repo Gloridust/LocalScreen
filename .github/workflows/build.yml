@@ -3,6 +3,7 @@ name: Build
 on:
   push:
     branches: [main, "feat/**"]
+    tags: ["v*"]
   pull_request:
   workflow_dispatch:
 
@@ -41,7 +42,8 @@ jobs:
 
   linux:
     name: Linux
-    runs-on: ubuntu-latest
+    # The oldest supported runner, so the package installs on older distros too.
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -55,14 +57,16 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev \
+            dpkg-dev fakeroot librsvg2-bin
       - run: flutter build linux --release
-      - name: Package
-        run: tar -C build/linux/x64/release -czf localscreen-linux-x64.tar.gz bundle
+      - name: Package (.deb)
+        run: packaging/linux/build_deb.sh dist
       - uses: actions/upload-artifact@v4
         with:
-          name: localscreen-linux-x64
-          path: localscreen-linux-x64.tar.gz
+          name: localscreen-linux-deb
+          path: dist/*.deb
+          if-no-files-found: error
 
   android:
     name: Android
@@ -83,10 +87,16 @@ jobs:
           cache: true
       # Debug-signed so it installs without a release keystore.
       - run: flutter build apk --release
+      - name: Package (.apk)
+        run: |
+          version="$(sed -n 's/^version: *\([^+]*\).*/\1/p' pubspec.yaml)"
+          mkdir dist
+          cp build/app/outputs/flutter-apk/app-release.apk "dist/LocalScreen-$version-android.apk"
       - uses: actions/upload-artifact@v4
         with:
           name: localscreen-android
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: dist/*.apk
+          if-no-files-found: error
 
   windows:
     name: Windows
@@ -102,10 +112,22 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
       - run: flutter build windows --release
+      - name: Package (installer)
+        shell: bash
+        run: |
+          version="$(sed -n 's/^version: *\([^+]*\).*/\1/p' pubspec.yaml)"
+          # Flutter does not bundle the Visual C++ runtime the app links against.
+          for dll in msvcp140.dll vcruntime140.dll vcruntime140_1.dll; do
+            cp "$SYSTEMROOT/System32/$dll" build/windows/x64/runner/Release/
+          done
+          command -v iscc >/dev/null || choco install innosetup --no-progress -y
+          export PATH="$PATH:/c/Program Files (x86)/Inno Setup 6"
+          iscc "//DAppVersion=$version" 'packaging\windows\installer.iss'
       - uses: actions/upload-artifact@v4
         with:
           name: localscreen-windows-x64
-          path: build/windows/x64/runner/Release
+          path: build/LocalScreen-*-windows-x64-setup.exe
+          if-no-files-found: error
 
   macos:
     name: macOS
@@ -123,9 +145,41 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
       - run: flutter build macos --release
-      - name: Package
-        run: ditto -c -k --keepParent build/macos/Build/Products/Release/localscreen.app localscreen-macos.zip
+      - name: Package (.dmg)
+        run: |
+          version="$(sed -n 's/^version: *\([^+]*\).*/\1/p' pubspec.yaml)"
+          mkdir -p stage dist
+          cp -R build/macos/Build/Products/Release/localscreen.app stage/LocalScreen.app
+          ln -s /Applications stage/Applications
+          hdiutil create -volname LocalScreen -srcfolder stage -ov -format UDZO \
+            "dist/LocalScreen-$version-macos.dmg"
       - uses: actions/upload-artifact@v4
         with:
           name: localscreen-macos
-          path: localscreen-macos.zip
+          path: dist/*.dmg
+          if-no-files-found: error
+
+  release:
+    name: Release
+    # Attaches the installers to the release of a pushed version tag.
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [checks, linux, android, windows, macos]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      TAG: ${{ github.ref_name }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Publish
+        run: |
+          cd dist
+          sha256sum * > SHA256SUMS.txt
+          gh release view "$TAG" >/dev/null 2>&1 ||
+            gh release create "$TAG" --verify-tag --title "LocalScreen ${TAG#v}" --generate-notes
+          gh release upload "$TAG" --clobber *
