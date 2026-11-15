@@ -1,0 +1,222 @@
+{
+  "@@locale": "zh",
+  "appTitle": "LocalScreen",
+  "cancel": "取消",
+  "close": "关闭",
+  "retry": "重试",
+  "save": "保存",
+  "back": "返回",
+  "settings": "设置",
+  "trusted": "已信任",
+  "accept": "接受",
+  "decline": "拒绝",
+  "thisDevice": "这台设备",
+  "localDiscoverable": "可被发现",
+  "localHidden": "已隐藏",
+  "localStarting": "正在启动…",
+  "localFailed": "本机服务未能启动",
+  "localFailedHint": "请重启 LocalScreen。如果问题仍在，检查防火墙是否允许局域网访问。",
+  "discoverableToggle": "允许附近设备发现",
+  "homeNearbyTitle": "附近的设备",
+  "homeNearbySubtitle": "同一网络中打开 LocalScreen 的设备会出现在这里。点一下，它就成为你的副屏。",
+  "homeNearbyCount": "{count} 台",
+  "@homeNearbyCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "manualConnect": "手动输入 IP",
+  "emptySearching": "正在寻找附近的设备…",
+  "emptyHintSameWifi": "确保两台设备连接到同一个 Wi-Fi，并都打开了 LocalScreen。",
+  "emptyHintManual": "还是找不到？试试手动输入对方的 IP。",
+  "manualTitle": "手动连接",
+  "manualSubtitle": "适用于屏蔽了设备发现的网络。输入对方设置页里显示的地址。",
+  "manualHint": "例如 192.168.1.42",
+  "manualConnectAction": "连接",
+  "manualFailed": "这个地址上没有找到 LocalScreen。请检查地址，并确认对方已打开应用。",
+  "connectModeLabel": "投屏方式",
+  "modeExtend": "扩展",
+  "modeMirror": "镜像",
+  "modeExtendDescription": "把副屏当作一块新的显示器，延伸你的桌面。",
+  "modeMirrorDescription": "副屏显示与这台设备相同的画面。",
+  "modeExtendUnavailable": "这台设备暂时无法创建虚拟显示器，本次将以镜像方式投屏。",
+  "comingSoon": "暂不可用",
+  "connectQualityLabel": "画质",
+  "qualitySmooth": "流畅",
+  "qualityBalanced": "均衡",
+  "qualityClear": "清晰",
+  "qualitySmoothDescription": "720p · 60 帧 · 网络一般时更稳",
+  "qualityBalancedDescription": "1080p · 60 帧 · 推荐",
+  "qualityClearDescription": "原始分辨率 · 30 帧 · 文字最锐利",
+  "startCasting": "开始投屏",
+  "waitingForPeer": "等待 {name} 回应…",
+  "@waitingForPeer": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pinTitle": "输入 PIN",
+  "pinPrompt": "输入 {name} 上显示的 6 位数字。",
+  "@pinPrompt": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pinWrong": "PIN 不正确，还可以再试 {attempts} 次。",
+  "@pinWrong": {
+    "placeholders": {
+      "attempts": {
+        "type": "int"
+      }
+    }
+  },
+  "pinVerifying": "正在验证…",
+  "pinInputLabel": "6 位 PIN",
+  "failDeclined": "{name} 拒绝了请求。",
+  "@failDeclined": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "failTimeout": "{name} 没有回应。请在那台设备上打开 LocalScreen 后重试。",
+  "@failTimeout": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "failPin": "PIN 错误次数过多。请重新发起连接，获取新的 PIN。",
+  "failNetwork": "连接已断开。请确认两台设备在同一网络。",
+  "failRequest": "无法发起连接。请确认对方仍在线后重试。",
+  "incomingWants": "{name} 想把这台设备用作副屏",
+  "@incomingWants": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "incomingPinHint": "在 {name} 上输入这个 PIN",
+  "@incomingPinHint": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "incomingPinValidity": "60 秒内有效，仅限本次配对。",
+  "incomingTrustedHint": "这是受信任的设备，无需 PIN。",
+  "sessionConnecting": "正在连接…",
+  "sessionWaitingPicture": "正在等待画面…",
+  "fitContain": "完整显示",
+  "fitCover": "铺满屏幕",
+  "disconnect": "断开",
+  "statLatency": "延迟",
+  "hostCastingTo": "正在投屏到",
+  "hostSelectingSource": "请在系统对话框中选择要共享的屏幕。",
+  "hostSelectingVirtualDisplay": "已新增一块虚拟显示器。请在系统对话框中选中它（新出现的那一块）并共享。",
+  "hostPreparingDisplay": "正在创建虚拟显示器…",
+  "noticeExtendFallback": "未能创建虚拟显示器，已改为镜像投屏。",
+  "hostConnecting": "正在建立连接…",
+  "hostLive": "投屏中",
+  "hostElapsed": "时长",
+  "stopCasting": "停止投屏",
+  "screenPickerTitle": "选择要共享的屏幕",
+  "screenPickerScreen": "屏幕 {index}",
+  "@screenPickerScreen": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "captureNotificationText": "正在共享这台设备的屏幕",
+  "noticeEndedRemote": "{name} 结束了投屏。",
+  "@noticeEndedRemote": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "noticeEndedLocal": "投屏已结束。",
+  "noticeCaptureFailed": "未能开始屏幕采集。请重试，并在系统对话框中选择一个屏幕。",
+  "noticeAutoAccepted": "已自动接受来自 {name} 的投屏。",
+  "@noticeAutoAccepted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "noticeRequestExpired": "来自 {name} 的请求已过期。",
+  "@noticeRequestExpired": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "noticeBusy": "已拒绝 {name}：当前正在投屏。",
+  "@noticeBusy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "noticeForgot": "已移除 {name}，下次连接需要重新输入 PIN。",
+  "@noticeForgot": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sectionDevice": "本机",
+  "deviceName": "设备名称",
+  "deviceNameDescription": "附近的设备会看到这个名字。",
+  "useDefaultName": "恢复默认",
+  "discoverable": "可被发现",
+  "discoverableDescription": "关闭后，附近的设备看不到这台设备，但你仍可以投屏到别人。",
+  "localAddress": "本机地址",
+  "sectionConnection": "连接",
+  "defaultMode": "默认投屏方式",
+  "defaultQuality": "默认画质",
+  "autoAccept": "自动接受受信任设备",
+  "autoAcceptDescription": "受信任的主机发起投屏时直接开始，不再询问。",
+  "sectionTrusted": "受信任设备",
+  "trustedEmpty": "还没有受信任的设备。第一次用 PIN 配对成功后，设备会出现在这里。",
+  "forget": "移除",
+  "forgetTitle": "移除 {name}？",
+  "@forgetTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "forgetBody": "移除后，它下次连接需要重新输入 PIN。",
+  "sectionAppearance": "外观",
+  "theme": "主题",
+  "themeSystem": "跟随系统",
+  "themeLight": "浅色",
+  "themeDark": "深色",
+  "language": "语言",
+  "languageSystem": "跟随系统",
+  "sectionAbout": "关于",
+  "aboutVersion": "版本",
+  "aboutPrivacy": "全程只走局域网：无账号、无云端、无广告。",
+  "aboutDeviceId": "设备 ID",
+  "launchAtStartup": "开机自启",
+  "launchAtStartupDescription": "登录系统后自动启动，在后台等待连接。"
+}
