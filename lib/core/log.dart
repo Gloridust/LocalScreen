@@ -59,7 +59,14 @@ abstract final class AppLog {
       return onPlatformError?.call(error, stack) ?? false;
     };
     _write(banner);
+    _memory();
+    Timer.periodic(_memoryInterval, (_) => _memory());
   }
+
+  /// How often the process's memory is noted, so growth shows in the log.
+  static const _memoryInterval = Duration(minutes: 1);
+
+  static void _memory() => _write('app: memory ${ProcessInfo.currentRss ~/ (1024 * 1024)} MB');
 
   static void _write(String message) {
     final sink = _sink;

@@ -166,6 +166,11 @@ class SessionController extends ChangeNotifier {
       _notify();
       return;
     }
+    if (message case ControlSignal(action: ControlSignal.pace, :final value)) {
+      final framesPerSecond = int.tryParse(value ?? '');
+      if (isHost && framesPerSecond != null) await _media.limitFramerate(framesPerSecond);
+      return;
+    }
     if (message case ControlSignal(action: ControlSignal.screen, :final value)) {
       final size = ScreenSize.tryParse(value);
       if (size != null && !_peerScreen.isCompleted) _peerScreen.complete(size);

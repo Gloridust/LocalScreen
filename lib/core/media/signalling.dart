@@ -110,6 +110,10 @@ final class ControlSignal extends SignalMessage {
   /// physical pixels. The host sizes its virtual monitor from it.
   static const screen = 'screen';
 
+  /// The display asks for at most [value] frames per second, because it
+  /// cannot decode and show more.
+  static const pace = 'pace';
+
   final String action;
   final String? value;
 

@@ -262,8 +262,12 @@ class LsMotion {
   /// Page transitions, entering fullscreen.
   LsMotionSpec get slow => const LsMotionSpec(Duration(milliseconds: 420), Curves.easeInOutCubic);
 
-  /// Looping discovery ripples and breathing glow.
+  /// One cycle of the discovery ripples.
   LsMotionSpec get ambient => const LsMotionSpec(Duration(milliseconds: 2400), Curves.easeOut);
+
+  /// How many [ambient] cycles ripples run before they come to rest. Every
+  /// animated frame redraws the window, so an idle screen must stop moving.
+  int get ambientCycles => 3;
 
   /// Delay between consecutive list items entering.
   Duration get stagger => const Duration(milliseconds: 40);

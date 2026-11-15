@@ -8,6 +8,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/log.dart';
+import '../core/media/decode_load.dart';
 import '../core/media/fake_media_session.dart';
 import '../core/media/media_providers.dart';
 import '../core/media/media_session.dart';
@@ -47,7 +48,8 @@ Future<void> bootstrap(List<String> args) async {
       '${profile.storageDir}${Platform.pathSeparator}logs',
       banner:
           'LocalScreen ${package.version}+${package.buildNumber} on ${profile.platform} '
-          '(${Platform.operatingSystemVersion}), ${profile.kind.name}',
+          '(${Platform.operatingSystemVersion}), ${profile.kind.name}, '
+          '${Platform.numberOfProcessors} cores, ${profile.memoryMb ?? '?'} MB RAM',
     );
   }
   final AutostartService autostart = fakeMode
@@ -67,6 +69,10 @@ Future<void> bootstrap(List<String> args) async {
   } else {
     node = await RustNodeService.create();
     media = WebRtcMediaEngine(
+      startingFramerateLimit: DecodeLoadMonitor.startingLimit(
+        cores: Platform.numberOfProcessors,
+        memoryMb: profile.memoryMb,
+      ),
       capture: ScreenCapture(
         chooser: chooseScreenSource,
         direct: profile.platform == 'linux' ? const MutterMonitorCapture() : null,

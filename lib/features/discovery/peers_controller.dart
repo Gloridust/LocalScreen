@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../app/theme/lumen.dart';
 import '../../core/node/local_node.dart';
 import '../../core/node/node_service.dart';
 
@@ -26,6 +27,8 @@ class PeersNotifier extends Notifier<List<DeviceInfo>> {
   void _onEvent(NodeEvent event) {
     switch (event) {
       case NodeEvent_PeerFound(:final peer):
+        // A new neighbour is worth a ripple; a refreshed one is not.
+        if (!_byId.containsKey(peer.id)) LsAmbient.pulse();
         _byId[peer.id] = peer;
       case NodeEvent_PeerLost(:final id):
         if (_byId.remove(id) == null) return;

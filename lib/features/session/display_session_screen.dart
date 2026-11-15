@@ -199,6 +199,7 @@ class _WaitingForPictureState extends State<_WaitingForPicture> {
           LsRipples(
             coreSize: core,
             color: c.accent,
+            continuous: true,
             spread: 2.4,
             child: Container(
               width: core,

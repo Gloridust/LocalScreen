@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
 import 'captured_screen.dart';
+import 'decode_load.dart';
 import 'media_session.dart';
 import 'media_stats.dart';
 import 'quality.dart';
@@ -12,13 +14,18 @@ import 'signalling.dart';
 
 /// [MediaEngine] backed by flutter_webrtc (libwebrtc).
 class WebRtcMediaEngine implements MediaEngine {
-  /// Creates the engine; [capture] is used by host sessions.
-  const WebRtcMediaEngine({required this.capture});
+  /// Creates the engine; [capture] is used by host sessions and
+  /// [startingFramerateLimit] by display sessions on modest hardware.
+  const WebRtcMediaEngine({required this.capture, this.startingFramerateLimit});
 
   final ScreenCapture capture;
 
+  /// See [DecodeLoadMonitor.startingLimit].
+  final int? startingFramerateLimit;
+
   @override
-  MediaSession create() => WebRtcMediaSession(capture: capture);
+  MediaSession create() =>
+      WebRtcMediaSession(capture: capture, startingFramerateLimit: startingFramerateLimit);
 }
 
 /// One LAN-only peer connection carrying a single screen video track.
@@ -30,9 +37,16 @@ class WebRtcMediaEngine implements MediaEngine {
 /// * H.264 is preferred, VP8 next, via codec preferences where supported.
 class WebRtcMediaSession implements MediaSession {
   /// Creates an idle session.
-  WebRtcMediaSession({required this.capture});
+  WebRtcMediaSession({required this.capture, int? startingFramerateLimit})
+    : _load = DecodeLoadMonitor(limit: startingFramerateLimit);
 
   final ScreenCapture capture;
+
+  /// Display: watches whether this device keeps up with the picture.
+  final DecodeLoadMonitor _load;
+
+  /// Host: the ceiling the display asked for.
+  int? _framerateLimit;
 
   static const _configuration = <String, dynamic>{
     'iceServers': <Map<String, dynamic>>[],
@@ -185,9 +199,24 @@ class WebRtcMediaSession implements MediaSession {
   RTCRtpEncoding _encodingFor(QualityPreset q) => RTCRtpEncoding(
     minBitrate: q.minBitrate,
     maxBitrate: q.maxBitrate,
-    maxFramerate: q.maxFramerate,
+    maxFramerate: _maxFramerate,
     scaleResolutionDownBy: _scale,
   );
+
+  /// The preset's frame rate, capped by what the display can take.
+  int get _maxFramerate {
+    final limit = _framerateLimit;
+    final preset = _quality.maxFramerate;
+    return limit != null && limit < preset ? limit : preset;
+  }
+
+  @override
+  Future<void> limitFramerate(int framesPerSecond) async {
+    if (framesPerSecond <= 0 || framesPerSecond == _framerateLimit) return;
+    debugPrint('media: the display asked for at most $framesPerSecond fps');
+    _framerateLimit = framesPerSecond;
+    await _applySenderParameters();
+  }
 
   /// Orders codecs H.264 → VP8 → everything else; keeps RTX/RED/FEC.
   Future<void> _preferCodecs(RTCRtpTransceiver transceiver) async {
@@ -231,7 +260,7 @@ class WebRtcMediaSession implements MediaSession {
       final e = encodings.first;
       e.minBitrate = _quality.minBitrate;
       e.maxBitrate = _quality.maxBitrate;
-      e.maxFramerate = _quality.maxFramerate;
+      e.maxFramerate = _maxFramerate;
       e.scaleResolutionDownBy = _scale;
     }
     params.degradationPreference = switch (_quality.degradation) {
@@ -267,6 +296,8 @@ class WebRtcMediaSession implements MediaSession {
     };
     _rendererReady.value = true;
     final pc = await _createPeer();
+    final limit = _load.limit;
+    if (limit != null) _askForPace(limit);
     pc.onTrack = (event) async {
       debugPrint('media: remote ${event.track.kind} track');
       if (event.track.kind != 'video' || _closed) return;
@@ -345,12 +376,39 @@ class WebRtcMediaSession implements MediaSession {
         for (final r in reports)
           StatsEntry(r.type, r.timestamp / 1000, Map<Object?, Object?>.from(r.values)),
       ];
-      if (_isHost) _adaptScale(entries);
+      if (_isHost) {
+        _adaptScale(entries);
+      } else {
+        _watchLoad(entries);
+      }
       final sample = _sampler.sample(entries, inbound: !_isHost);
       if (!_stats.isClosed) _stats.add(sample);
       _logStats(sample, entries);
     } catch (e) {
       debugPrint('getStats failed: $e');
+    }
+  }
+
+  /// Display: tells the host how many frames per second to send at most.
+  void _askForPace(int framesPerSecond) {
+    debugPrint('media: asking the host for at most $framesPerSecond fps');
+    _send(ControlSignal(action: ControlSignal.pace, value: '$framesPerSecond'));
+  }
+
+  /// Display: lowers the pace when frames arrive faster than they can be
+  /// decoded and shown.
+  void _watchLoad(List<StatsEntry> entries) {
+    for (final e in entries) {
+      if (e.type != 'inbound-rtp' || e.values['kind'] == 'audio') continue;
+      final limit = _load.add(
+        DecodeSample(
+          framesReceived: (e.values['framesReceived'] as num?)?.toInt() ?? 0,
+          framesDecoded: (e.values['framesDecoded'] as num?)?.toInt() ?? 0,
+          framesDropped: (e.values['framesDropped'] as num?)?.toInt() ?? 0,
+        ),
+      );
+      if (limit != null) _askForPace(limit);
+      return;
     }
   }
 
@@ -377,7 +435,8 @@ class WebRtcMediaSession implements MediaSession {
       '${_isHost ? ' encoder ${field('encoderImplementation')} frames ${field('framesEncoded')}'
                 ' limited by ${field('qualityLimitationReason')}' : ' decoder ${field('decoderImplementation')} frames ${field('framesDecoded')}'
                 ' dropped ${field('framesDropped')} freezes ${field('freezeCount')}'
-                ' lost ${field('packetsLost')}'}',
+                ' lost ${field('packetsLost')}'}'
+      ' memory ${ProcessInfo.currentRss ~/ (1024 * 1024)} MB',
     );
   }
 
@@ -411,7 +470,6 @@ class WebRtcMediaSession implements MediaSession {
           objectFit: fill
               ? RTCVideoViewObjectFit.RTCVideoViewObjectFitCover
               : RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
-          filterQuality: FilterQuality.medium,
         );
       },
     );

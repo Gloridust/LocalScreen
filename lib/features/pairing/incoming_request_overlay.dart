@@ -135,6 +135,8 @@ class IncomingRequestCard extends ConsumerWidget {
               LsRipples(
                 coreSize: badge,
                 color: c.accent,
+                // The request times out by itself.
+                continuous: true,
                 spread: 1.8,
                 child: LsDeviceBadge(
                   icon: deviceKindIcon(peer.kind),
