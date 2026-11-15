@@ -74,6 +74,18 @@ set_target_properties(${BINARY_NAME}
 # them to the application.
 include(flutter/generated_plugins.cmake)
 
+# runner/pipewire_capture.cc feeds frames into flutter_webrtc's own peer
+# connection factory, so it is compiled against that plugin's headers with
+# the same definitions the plugin uses (they decide its class layout), and
+# linked to the same libwebrtc.
+get_target_property(FLUTTER_WEBRTC_DIR flutter_webrtc_plugin SOURCE_DIR)
+target_include_directories(${BINARY_NAME} PRIVATE "${FLUTTER_WEBRTC_DIR}/flutter/include")
+target_compile_definitions(${BINARY_NAME} PRIVATE RTC_DESKTOP_DEVICE)
+target_compile_features(${BINARY_NAME} PRIVATE cxx_std_17)
+target_compile_options(${BINARY_NAME} PRIVATE -include cstdint)
+target_link_libraries(${BINARY_NAME} PRIVATE
+  "${FLUTTER_WEBRTC_DIR}/../third_party/libwebrtc/lib/libwebrtc.so")
+
 
 # === Installation ===
 # By default, "installing" just makes a relocatable bundle in the build

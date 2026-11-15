@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import 'captured_screen.dart';
 import 'media_stats.dart';
 import 'quality.dart';
 import 'signalling.dart';
@@ -9,7 +10,8 @@ enum MediaPhase {
   /// Nothing started yet.
   idle,
 
-  /// Host: waiting for the user to pick a screen (system portal / picker).
+  /// Host: opening the capture, which may wait for the user to pick a
+  /// screen (system portal / picker).
   capturing,
 
   /// Offer/answer and ICE in progress.
@@ -49,7 +51,10 @@ abstract class MediaSession {
   Stream<MediaStats> get stats;
 
   /// Host: capture the screen, add it send-only and send the offer.
-  Future<void> startHost(QualityPreset quality);
+  ///
+  /// With [source] that capture is sent instead of asking for one; its
+  /// owner closes it.
+  Future<void> startHost(QualityPreset quality, {CapturedScreen? source});
 
   /// Display: wait for the offer and answer it.
   Future<void> startDisplay();

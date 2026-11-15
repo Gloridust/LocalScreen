@@ -37,3 +37,7 @@ flutter test --update-goldens test/screenshots  # 重新生成 docs/screenshots
 ```
 
 需要 Flutter 3.47+、Rust 1.90+ 与 `flutter_rust_bridge_codegen` 2.13。
+Linux 上构建还需要 GStreamer 开发包：
+`sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev`。
+
+遇到问题时，设置 → 关于 → 诊断日志 可以打开日志文件夹（日志只保存在本机）。

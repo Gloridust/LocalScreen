@@ -776,6 +776,30 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'登录系统后自动启动，在后台等待连接。'**
   String get launchAtStartupDescription;
+
+  /// No description provided for @sessionWaitingHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'对方电脑还在准备画面。如果那边弹出了选择屏幕的窗口，请在那里选好要共享的屏幕。'**
+  String get sessionWaitingHint;
+
+  /// No description provided for @aboutLogs.
+  ///
+  /// In zh, this message translates to:
+  /// **'诊断日志'**
+  String get aboutLogs;
+
+  /// No description provided for @aboutLogsDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'只保存在本机，遇到问题时可以发给开发者。'**
+  String get aboutLogsDescription;
+
+  /// No description provided for @aboutLogsOpen.
+  ///
+  /// In zh, this message translates to:
+  /// **'打开文件夹'**
+  String get aboutLogsOpen;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

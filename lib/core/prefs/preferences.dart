@@ -4,6 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../media/quality.dart';
 import '../node/node_service.dart';
+import '../platform/linux/monitor_layout.dart';
+import '../platform/virtual_display.dart';
 
 /// User preferences, persisted with `shared_preferences`.
 class Preferences {
@@ -114,6 +116,25 @@ class PreferencesStore {
       else
         prefs.setString(_locale, p.locale!.languageCode),
     ]);
+  }
+}
+
+/// Keeps each display device's virtual-monitor placement in
+/// [SharedPreferences], so the monitor reappears where it was last put.
+class PreferencesPlacementStore implements VirtualPlacementStore {
+  /// Wraps [prefs].
+  const PreferencesPlacementStore(this.prefs);
+
+  final SharedPreferences prefs;
+
+  static String _key(String key) => 'ls.extendPlacement.$key';
+
+  @override
+  VirtualPlacement? read(String key) => VirtualPlacement.tryParse(prefs.getString(_key(key)));
+
+  @override
+  void write(String key, VirtualPlacement placement) {
+    prefs.setString(_key(key), placement.encode());
   }
 }
 

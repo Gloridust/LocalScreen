@@ -79,6 +79,8 @@ void main() {
         );
         async.elapse(const Duration(milliseconds: 50));
         expect(displays.created, [const ScreenSize(2560, 1600)]);
+        // Keyed by the display device, so its monitor returns to its place.
+        expect(displays.placementKeys, [c.peer.id]);
         expect(displays.alive, 1);
         expect(c.preparingDisplay, isFalse);
         expect(c.virtualDisplayLabel, isNotNull);

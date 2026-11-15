@@ -62,8 +62,8 @@ Priority: optional
 Architecture: $arch
 Maintainer: $maintainer
 Installed-Size: $(du -sk "$pkg" | cut -f1)
-Depends: $depends
-Recommends: xdg-desktop-portal, pipewire, gstreamer1.0-tools, gstreamer1.0-pipewire
+Depends: $depends, gstreamer1.0-plugins-base
+Recommends: xdg-desktop-portal, pipewire, gstreamer1.0-pipewire
 Homepage: https://github.com/Gloridust/LocalScreen
 Description: Turn any device on your LAN into a second screen
  LocalScreen finds devices on the local network and uses one of them as an

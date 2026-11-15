@@ -159,8 +159,33 @@ class _DisplaySessionScreenState extends ConsumerState<DisplaySessionScreen> {
   }
 }
 
-class _WaitingForPicture extends StatelessWidget {
+class _WaitingForPicture extends StatefulWidget {
   const _WaitingForPicture();
+
+  @override
+  State<_WaitingForPicture> createState() => _WaitingForPictureState();
+}
+
+class _WaitingForPictureState extends State<_WaitingForPicture> {
+  /// After this long, say what the wait is probably about.
+  static const _patience = Duration(seconds: 8);
+
+  Timer? _timer;
+  bool _slow = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer(_patience, () {
+      if (mounted) setState(() => _slow = true);
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -190,6 +215,20 @@ class _WaitingForPicture extends StatelessWidget {
             context.l10n.sessionWaitingPicture,
             style: ls.text.body.copyWith(color: c.textSecondary),
           ),
+          if (_slow) ...[
+            SizedBox(height: ls.space.sm),
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: ls.size.cardMaxWidth),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: ls.space.xl),
+                child: Text(
+                  context.l10n.sessionWaitingHint,
+                  textAlign: TextAlign.center,
+                  style: ls.text.caption.copyWith(color: c.textTertiary),
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );

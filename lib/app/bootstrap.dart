@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../core/log.dart';
 import '../core/media/fake_media_session.dart';
 import '../core/media/media_providers.dart';
 import '../core/media/media_session.dart';
@@ -17,7 +20,8 @@ import '../core/node/rust_node_service.dart';
 import '../core/platform/autostart.dart';
 import '../core/platform/device_profile.dart';
 import '../core/platform/immersive.dart';
-import '../core/platform/mutter_virtual_display.dart';
+import '../core/platform/linux/mutter_monitor_capture.dart';
+import '../core/platform/linux/mutter_virtual_display.dart';
 import '../core/platform/virtual_display.dart';
 import '../core/prefs/preferences.dart';
 import '../features/session/screen_source_picker.dart';
@@ -37,6 +41,15 @@ Future<void> bootstrap(List<String> args) async {
   await DesktopWindow.init(title: 'LocalScreen', minimized: args.contains(autostartFlag));
   final prefs = await SharedPreferences.getInstance();
   final profile = await DeviceProfile.detect();
+  final package = await PackageInfo.fromPlatform();
+  if (!fakeMode) {
+    await AppLog.start(
+      '${profile.storageDir}${Platform.pathSeparator}logs',
+      banner:
+          'LocalScreen ${package.version}+${package.buildNumber} on ${profile.platform} '
+          '(${Platform.operatingSystemVersion}), ${profile.kind.name}',
+    );
+  }
   final AutostartService autostart = fakeMode
       ? InMemoryAutostartService()
       : profile.isDesktop
@@ -56,6 +69,7 @@ Future<void> bootstrap(List<String> args) async {
     media = WebRtcMediaEngine(
       capture: ScreenCapture(
         chooser: chooseScreenSource,
+        direct: profile.platform == 'linux' ? const MutterMonitorCapture() : null,
         notificationText: () => _strings(prefs).captureNotificationText,
       ),
     );
@@ -70,7 +84,9 @@ Future<void> bootstrap(List<String> args) async {
         mediaEngineProvider.overrideWithValue(media),
         autostartServiceProvider.overrideWithValue(autostart),
         if (!fakeMode && profile.platform == 'linux')
-          virtualDisplayProvider.overrideWithValue(MutterVirtualDisplayProvider()),
+          virtualDisplayProvider.overrideWithValue(
+            MutterVirtualDisplayProvider(placements: PreferencesPlacementStore(prefs)),
+          ),
       ],
       child: const LocalScreenApp(),
     ),

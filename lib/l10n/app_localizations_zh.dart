@@ -380,4 +380,16 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get launchAtStartupDescription => '登录系统后自动启动，在后台等待连接。';
+
+  @override
+  String get sessionWaitingHint => '对方电脑还在准备画面。如果那边弹出了选择屏幕的窗口，请在那里选好要共享的屏幕。';
+
+  @override
+  String get aboutLogs => '诊断日志';
+
+  @override
+  String get aboutLogsDescription => '只保存在本机，遇到问题时可以发给开发者。';
+
+  @override
+  String get aboutLogsOpen => '打开文件夹';
 }

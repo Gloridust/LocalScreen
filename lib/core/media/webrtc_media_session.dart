@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
+import 'captured_screen.dart';
 import 'media_session.dart';
 import 'media_stats.dart';
 import 'quality.dart';
@@ -49,7 +50,10 @@ class WebRtcMediaSession implements MediaSession {
   /// Completes once [_pc] exists (or the session closed), so signals that
   /// arrive while the peer connection is still being created are not lost.
   final _peerReady = Completer<void>();
-  MediaStream? _localStream;
+  CapturedScreen? _captured;
+
+  /// Whether this session opened [_captured] and so has to close it.
+  bool _ownsCapture = false;
   RTCRtpSender? _sender;
   RTCVideoRenderer? _renderer;
   final _pendingCandidates = <RTCIceCandidate>[];
@@ -90,12 +94,14 @@ class WebRtcMediaSession implements MediaSession {
       );
     };
     pc.onConnectionState = _onConnectionState;
+    pc.onIceConnectionState = (state) => debugPrint('media: ice ${state.name}');
     _pc = pc;
     if (!_peerReady.isCompleted) _peerReady.complete();
     return pc;
   }
 
   void _onConnectionState(RTCPeerConnectionState state) {
+    debugPrint('media: connection ${state.name}');
     if (_closed) return;
     switch (state) {
       case RTCPeerConnectionState.RTCPeerConnectionStateConnected:
@@ -112,37 +118,45 @@ class WebRtcMediaSession implements MediaSession {
   }
 
   void _setPhase(MediaPhase p) {
-    if (!_closed && phase.value != MediaPhase.failed) phase.value = p;
+    if (_closed || phase.value == MediaPhase.failed || phase.value == p) return;
+    debugPrint('media: ${_isHost ? 'host' : 'display'} ${p.name}');
+    phase.value = p;
   }
 
   void _fail(MediaFailure reason) {
     if (_closed || phase.value == MediaPhase.failed) return;
+    debugPrint('media: failed (${reason.name})');
     failure = reason;
     phase.value = MediaPhase.failed;
   }
 
   @override
-  Future<void> startHost(QualityPreset quality) async {
+  Future<void> startHost(QualityPreset quality, {CapturedScreen? source}) async {
     _isHost = true;
     _quality = quality;
     _setPhase(MediaPhase.capturing);
-    final MediaStream? stream;
-    try {
-      stream = await capture.open(frameRate: quality.maxFramerate);
-    } catch (e) {
-      debugPrint('screen capture failed: $e');
+    var captured = source;
+    if (captured == null) {
+      try {
+        captured = await capture.open(frameRate: quality.maxFramerate);
+      } catch (e) {
+        debugPrint('screen capture failed: $e');
+      }
+      _ownsCapture = captured != null;
+    }
+    if (captured == null || captured.stream.getVideoTracks().isEmpty || _closed) {
+      if (_ownsCapture) await _closeCapture(captured);
       _fail(MediaFailure.capture);
       return;
     }
-    if (stream == null || stream.getVideoTracks().isEmpty || _closed) {
-      await stream?.dispose();
-      _fail(MediaFailure.capture);
-      return;
-    }
-    _localStream = stream;
+    _captured = captured;
+    _useKnownSourceSize();
+    final stream = captured.stream;
     final track = stream.getVideoTracks().first;
-    // The user can stop sharing from the system UI (portal, notification).
+    // The capture can end on its own: the user stops sharing from the system
+    // UI (portal, notification), or the captured screen goes away.
     track.onEnded = () => _fail(MediaFailure.capture);
+    unawaited(captured.ended?.then((_) => _fail(MediaFailure.capture)));
 
     _setPhase(MediaPhase.connecting);
     try {
@@ -237,6 +251,7 @@ class WebRtcMediaSession implements MediaSession {
     _quality = quality;
     _scale = 1;
     _sourceSize = null;
+    _useKnownSourceSize();
     await _applySenderParameters();
   }
 
@@ -246,10 +261,14 @@ class WebRtcMediaSession implements MediaSession {
     _setPhase(MediaPhase.connecting);
     final renderer = _renderer = RTCVideoRenderer();
     await renderer.initialize();
-    renderer.onFirstFrameRendered = () => _setPhase(MediaPhase.live);
+    renderer.onFirstFrameRendered = () {
+      debugPrint('media: first frame rendered');
+      _setPhase(MediaPhase.live);
+    };
     _rendererReady.value = true;
     final pc = await _createPeer();
     pc.onTrack = (event) async {
+      debugPrint('media: remote ${event.track.kind} track');
       if (event.track.kind != 'video' || _closed) return;
       if (event.streams.isNotEmpty) {
         renderer.srcObject = event.streams.first;
@@ -304,6 +323,15 @@ class WebRtcMediaSession implements MediaSession {
 
   (int, int)? _sourceSize;
 
+  /// Takes the frame size from the capture itself when it states one, since
+  /// not every source reports it through the stats.
+  void _useKnownSourceSize() {
+    final size = _captured?.size;
+    if (size == null) return;
+    _sourceSize = size;
+    _scale = _quality.scaleFor(size.$1, size.$2);
+  }
+
   void _startStats() {
     _statsTimer ??= Timer.periodic(const Duration(seconds: 1), (_) => _pollStats());
   }
@@ -318,10 +346,39 @@ class WebRtcMediaSession implements MediaSession {
           StatsEntry(r.type, r.timestamp / 1000, Map<Object?, Object?>.from(r.values)),
       ];
       if (_isHost) _adaptScale(entries);
-      if (!_stats.isClosed) _stats.add(_sampler.sample(entries, inbound: !_isHost));
+      final sample = _sampler.sample(entries, inbound: !_isHost);
+      if (!_stats.isClosed) _stats.add(sample);
+      _logStats(sample, entries);
     } catch (e) {
       debugPrint('getStats failed: $e');
     }
+  }
+
+  int _statsSamples = 0;
+
+  /// Writes one line every ten seconds: enough to see afterwards whether the
+  /// picture flowed, stalled or never started.
+  void _logStats(MediaStats sample, List<StatsEntry> entries) {
+    if (_statsSamples++ % 10 != 0) return;
+    final rtp = _isHost ? 'outbound-rtp' : 'inbound-rtp';
+    Object? field(String name) {
+      for (final e in entries) {
+        if (e.type == rtp && e.values['kind'] != 'audio' && e.values[name] != null) {
+          return e.values[name];
+        }
+      }
+      return null;
+    }
+
+    debugPrint(
+      'media: ${_isHost ? 'sending' : 'receiving'} ${sample.width}x${sample.height} '
+      '${sample.framesPerSecond?.toStringAsFixed(0)} fps '
+      '${sample.bitrateKbps?.toStringAsFixed(0)} kbps rtt ${sample.roundTripMs?.toStringAsFixed(0)} ms'
+      '${_isHost ? ' encoder ${field('encoderImplementation')} frames ${field('framesEncoded')}'
+                ' limited by ${field('qualityLimitationReason')}' : ' decoder ${field('decoderImplementation')} frames ${field('framesDecoded')}'
+                ' dropped ${field('framesDropped')} freezes ${field('freezeCount')}'
+                ' lost ${field('packetsLost')}'}',
+    );
   }
 
   /// Once the capture size is known, scales it down to the preset's target.
@@ -367,14 +424,9 @@ class WebRtcMediaSession implements MediaSession {
     if (!_peerReady.isCompleted) _peerReady.complete();
     _statsTimer?.cancel();
     _disconnectTimer?.cancel();
-    final stream = _localStream;
-    _localStream = null;
-    if (stream != null) {
-      for (final t in stream.getTracks()) {
-        await _quietly(t.stop);
-      }
-      await _quietly(stream.dispose);
-    }
+    final captured = _captured;
+    _captured = null;
+    if (_ownsCapture) await _closeCapture(captured);
     final pc = _pc;
     _pc = null;
     if (pc != null) {
@@ -388,8 +440,17 @@ class WebRtcMediaSession implements MediaSession {
       renderer.srcObject = null;
       await _quietly(renderer.dispose);
     }
-    if (_isHost) await capture.release();
     await _stats.close();
+  }
+
+  /// Stops the tracks of a capture this session opened, then its source.
+  static Future<void> _closeCapture(CapturedScreen? captured) async {
+    if (captured == null) return;
+    for (final t in captured.stream.getTracks()) {
+      await _quietly(t.stop);
+    }
+    await _quietly(captured.stream.dispose);
+    await _quietly(captured.close);
   }
 
   static Future<void> _quietly(Future<void> Function() step) async {
