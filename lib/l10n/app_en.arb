@@ -113,5 +113,9 @@
   "aboutPrivacy": "Local network only: no accounts, no cloud, no ads.",
   "aboutDeviceId": "Device ID",
   "launchAtStartup": "Launch at startup",
-  "launchAtStartupDescription": "Start when you sign in and wait for connections in the background."
+  "launchAtStartupDescription": "Start when you sign in and wait for connections in the background.",
+  "sessionWaitingHint": "The other computer is still preparing the picture. If it shows a screen picker, choose the screen to share there.",
+  "aboutLogs": "Diagnostic logs",
+  "aboutLogsDescription": "Kept on this device only. Send them along when reporting a problem.",
+  "aboutLogsOpen": "Open folder"
 }

@@ -9,6 +9,7 @@ project(runner LANGUAGES CXX)
 add_executable(${BINARY_NAME}
   "main.cc"
   "my_application.cc"
+  "pipewire_capture.cc"
   "${FLUTTER_MANAGED_DIR}/generated_plugin_registrant.cc"
 )
 
@@ -24,3 +25,8 @@ target_link_libraries(${BINARY_NAME} PRIVATE flutter)
 target_link_libraries(${BINARY_NAME} PRIVATE PkgConfig::GTK)
 
 target_include_directories(${BINARY_NAME} PRIVATE "${CMAKE_SOURCE_DIR}")
+
+# pipewire_capture.cc reads PipeWire video with GStreamer.
+pkg_check_modules(GST REQUIRED IMPORTED_TARGET
+  gstreamer-1.0 gstreamer-app-1.0 gstreamer-video-1.0)
+target_link_libraries(${BINARY_NAME} PRIVATE PkgConfig::GST)

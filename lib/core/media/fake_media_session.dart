@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/widgets.dart';
 
 import '../../app/theme/context_ext.dart';
+import 'captured_screen.dart';
 import 'media_session.dart';
 import 'media_stats.dart';
 import 'quality.dart';
@@ -73,7 +74,7 @@ class FakeMediaSession implements MediaSession {
   }
 
   @override
-  Future<void> startHost(QualityPreset quality) async {
+  Future<void> startHost(QualityPreset quality, {CapturedScreen? source}) async {
     _quality = quality;
     _goLive();
   }

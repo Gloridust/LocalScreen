@@ -405,4 +405,18 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get launchAtStartupDescription =>
       'Start when you sign in and wait for connections in the background.';
+
+  @override
+  String get sessionWaitingHint =>
+      'The other computer is still preparing the picture. If it shows a screen picker, choose the screen to share there.';
+
+  @override
+  String get aboutLogs => 'Diagnostic logs';
+
+  @override
+  String get aboutLogsDescription =>
+      'Kept on this device only. Send them along when reporting a problem.';
+
+  @override
+  String get aboutLogsOpen => 'Open folder';
 }

@@ -17,7 +17,7 @@ import '../../core/platform/virtual_display.dart';
 ///
 /// In extend mode the host first adds a virtual monitor sized like the
 /// display's screen (which the display reports right after the session is
-/// established), then captures it like any other monitor.
+/// established) and sends that monitor's own picture.
 class SessionController extends ChangeNotifier {
   /// Creates a controller; call [start] next.
   SessionController({
@@ -83,8 +83,13 @@ class SessionController extends ChangeNotifier {
   /// Host, extend mode: desktop name of the virtual monitor, once it exists.
   String? get virtualDisplayLabel => _virtualDisplay?.label;
 
+  /// Host, extend mode: the user has to pick the virtual monitor in the
+  /// system's screen picker, because its picture cannot be read directly.
+  bool get mustPickVirtualDisplay => _virtualDisplay != null && _virtualDisplay!.capture == null;
+
   /// Starts capture (host) or waits for the offer (display).
   Future<void> start() async {
+    debugPrint('session: ${role.name} ${mode.name} with ${peer.kind.name} "${peer.name}"');
     _media.onSignal = _send;
     _media.phase.addListener(_onPhase);
     _statsSub = _media.stats.listen((s) {
@@ -94,7 +99,7 @@ class SessionController extends ChangeNotifier {
     if (isHost) {
       if (mode == ShareMode.extend) await _addVirtualDisplay();
       if (_closed) return;
-      await _media.startHost(_quality);
+      await _media.startHost(_quality, source: _virtualDisplay?.capture);
     } else {
       await _media.startDisplay();
       final screen = localScreen;
@@ -112,9 +117,11 @@ class SessionController extends ChangeNotifier {
         screenReportTimeout,
         onTimeout: () => ScreenSize.fallback,
       );
+      debugPrint('session: virtual display for a $reported screen');
       final display = await _virtualDisplays.create(
         size: reported.normalized(),
         refreshRate: _quality.maxFramerate,
+        placementKey: peer.id,
       );
       if (_closed) {
         await display.dispose();
@@ -187,6 +194,7 @@ class SessionController extends ChangeNotifier {
   Future<void> close() async {
     if (_closed) return;
     _closed = true;
+    debugPrint('session: closing');
     _media.phase.removeListener(_onPhase);
     // Start the media teardown before awaiting anything else so it is not
     // delayed behind unrelated futures.
@@ -195,7 +203,19 @@ class SessionController extends ChangeNotifier {
     final display = _virtualDisplay;
     _virtualDisplay = null;
     await media;
-    // After the capture stopped, so the picture never shows a vanishing monitor.
-    await display?.dispose();
+    // After the connection closed, so the picture never shows a vanishing
+    // monitor. Disposing it also ends its own capture.
+    if (display != null) {
+      final captured = display.capture;
+      if (captured != null) {
+        for (final track in captured.stream.getTracks()) {
+          await track.stop().catchError((Object e) => debugPrint('stopping the track: $e'));
+        }
+        await captured.stream.dispose().catchError(
+          (Object e) => debugPrint('disposing the stream: $e'),
+        );
+      }
+      await display.dispose();
+    }
   }
 }

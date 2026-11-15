@@ -4,6 +4,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../app/l10n.dart';
 import '../../app/theme/lumen.dart';
+import '../../core/log.dart';
 import '../../core/media/quality.dart';
 import '../../core/node/device_labels.dart';
 import '../../core/node/local_node.dart';
@@ -308,6 +309,16 @@ class _AboutGroup extends ConsumerWidget {
             child: SelectableText(id, maxLines: 1, style: value),
           ),
         ),
+        if (AppLog.directory != null && ref.watch(deviceProfileProvider).isDesktop)
+          SettingsRow(
+            title: l10n.aboutLogs,
+            description: l10n.aboutLogsDescription,
+            trailing: LsButton.ghost(
+              label: l10n.aboutLogsOpen,
+              size: LsButtonSize.small,
+              onPressed: AppLog.reveal,
+            ),
+          ),
         Padding(
           padding: EdgeInsets.all(ls.space.lg + ls.space.xs),
           child: Row(

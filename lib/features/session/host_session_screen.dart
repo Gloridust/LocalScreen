@@ -62,7 +62,7 @@ class _Console extends StatelessWidget {
     final (status, statusText) = switch (phase) {
       _ when controller.preparingDisplay => (LsStatus.warning, l10n.hostPreparingDisplay),
       MediaPhase.live => (LsStatus.connected, l10n.hostLive),
-      MediaPhase.capturing when controller.virtualDisplayLabel != null => (
+      MediaPhase.capturing when controller.mustPickVirtualDisplay => (
         LsStatus.warning,
         l10n.hostSelectingVirtualDisplay,
       ),

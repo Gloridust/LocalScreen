@@ -1,25 +1,24 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_webrtc/flutter_webrtc.dart' show DesktopCapturerSource;
 
 import '../../app/l10n.dart';
 import '../../app/router.dart';
 import '../../app/theme/lumen.dart';
+import '../../core/media/captured_screen.dart';
 
-/// Asks the user which screen to share (Windows / macOS with several
-/// screens; Linux uses the system portal instead).
-Future<DesktopCapturerSource?> chooseScreenSource(List<DesktopCapturerSource> screens) async {
+/// Asks the user which screen to share, when there are several and the
+/// platform leaves the choice to the app.
+Future<ScreenOption?> chooseScreenSource(List<ScreenOption> screens) async {
   final context = appNavigatorKey.currentContext;
   if (context == null) return screens.first;
-  return showLsSheet<DesktopCapturerSource>(
-    context,
-    builder: (_) => _ScreenSourcePicker(screens: screens),
-  );
+  return showLsSheet<ScreenOption>(context, builder: (_) => _ScreenSourcePicker(screens: screens));
 }
 
 class _ScreenSourcePicker extends StatelessWidget {
   const _ScreenSourcePicker({required this.screens});
 
-  final List<DesktopCapturerSource> screens;
+  final List<ScreenOption> screens;
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +49,16 @@ class _ScreenSourcePicker extends StatelessWidget {
                         child: AspectRatio(
                           aspectRatio: 16 / 9,
                           child: s.thumbnail == null
-                              ? ColoredBox(color: c.bg)
+                              ? ColoredBox(
+                                  color: c.bg,
+                                  child: Icon(
+                                    Icons.monitor_rounded,
+                                    size: ls.size.iconLarge,
+                                    color: c.textTertiary,
+                                  ),
+                                )
                               : Image.memory(
-                                  s.thumbnail!,
+                                  Uint8List.fromList(s.thumbnail!),
                                   fit: BoxFit.cover,
                                   gaplessPlayback: true,
                                 ),
@@ -60,10 +66,20 @@ class _ScreenSourcePicker extends StatelessWidget {
                       ),
                       SizedBox(height: ls.space.sm),
                       Text(
-                        l10n.screenPickerScreen(i + 1),
+                        s.title ?? l10n.screenPickerScreen(i + 1),
                         textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: ls.text.label.copyWith(color: c.textPrimary),
                       ),
+                      if (s.detail != null)
+                        Text(
+                          s.detail!,
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: ls.text.caption.copyWith(color: c.textSecondary),
+                        ),
                     ],
                   ),
                 ),
