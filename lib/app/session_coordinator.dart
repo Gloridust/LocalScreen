@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/node/local_node.dart';
 import '../core/node/node_service.dart';
 import '../core/notices.dart';
+import '../core/update/update_controller.dart';
 import '../features/pairing/incoming_request.dart';
 import '../features/pairing/incoming_request_overlay.dart';
 import '../features/session/active_session.dart';
@@ -102,6 +103,7 @@ class _SessionCoordinatorState extends ConsumerState<SessionCoordinator> {
     // Keep the event-driven providers alive from the first frame.
     ref.watch(localNodeProvider);
     ref.watch(trustedDevicesProvider);
+    ref.watch(updateControllerProvider);
     ref.listen<IncomingRequest?>(incomingRequestProvider, _onIncoming);
     ref.listen<SessionController?>(activeSessionProvider, _onSession);
     ref.listen<AppNotice?>(noticeProvider, _onNotice);

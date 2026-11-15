@@ -13,6 +13,10 @@ import 'package:localscreen/core/node/node_service.dart';
 import 'package:localscreen/core/platform/autostart.dart';
 import 'package:localscreen/core/platform/device_profile.dart';
 import 'package:localscreen/core/prefs/preferences.dart';
+import 'package:localscreen/core/update/update_controller.dart';
+import 'package:localscreen/core/update/update_installer.dart';
+import 'package:localscreen/core/update/update_source.dart';
+import 'package:localscreen/core/update/version.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Phone portrait.
@@ -23,6 +27,9 @@ const desktopSize = Size(1280, 800);
 
 /// Tablet landscape.
 const tabletSize = Size(1180, 820);
+
+/// Version the app under test reports.
+const testVersion = AppVersion(0, 1, 3);
 
 /// Profile of the device under test.
 const testProfile = DeviceProfile(
@@ -44,6 +51,9 @@ Future<FakeNodeService> pumpApp(
   FakeNodeService? node,
   bool reduceMotion = true,
   AutostartService? autostart,
+  UpdateSource? updates,
+  UpdateInstaller? installer,
+  UpdateSchedule? updateSchedule,
 }) async {
   SharedPreferences.setMockInitialValues({'ls.locale': 'zh', ...prefs});
   final sp = await SharedPreferences.getInstance();
@@ -69,6 +79,10 @@ Future<FakeNodeService> pumpApp(
         mediaEngineProvider.overrideWithValue(
           const FakeMediaEngine(connectDelay: Duration(milliseconds: 50)),
         ),
+        appVersionProvider.overrideWithValue(testVersion),
+        if (updates != null) updateSourceProvider.overrideWithValue(updates),
+        if (installer != null) updateInstallerProvider.overrideWithValue(installer),
+        if (updateSchedule != null) updateScheduleProvider.overrideWithValue(updateSchedule),
       ],
       child: const LocalScreenApp(),
     ),

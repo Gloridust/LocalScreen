@@ -40,10 +40,9 @@ class LsSwitch extends StatelessWidget {
               padding: EdgeInsets.all(pad),
               decoration: BoxDecoration(
                 color: value
-                    ? c.accent
+                    ? (s.highlighted ? ls.accentHover : c.accent)
                     : c.textTertiary.withValues(alpha: s.highlighted ? 0.42 : 0.3),
                 borderRadius: BorderRadius.circular(ls.radius.full),
-                boxShadow: value && s.highlighted ? ls.glow : null,
               ),
               child: AnimatedAlign(
                 duration: duration,

@@ -756,7 +756,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutPrivacy.
   ///
   /// In zh, this message translates to:
-  /// **'全程只走局域网：无账号、无云端、无广告。'**
+  /// **'投屏全程只走局域网：无账号、无云端、无广告。'**
   String get aboutPrivacy;
 
   /// No description provided for @aboutDeviceId.
@@ -800,6 +800,216 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'打开文件夹'**
   String get aboutLogsOpen;
+
+  /// No description provided for @sectionUpdates.
+  ///
+  /// In zh, this message translates to:
+  /// **'更新'**
+  String get sectionUpdates;
+
+  /// No description provided for @autoCheckUpdates.
+  ///
+  /// In zh, this message translates to:
+  /// **'自动检查更新'**
+  String get autoCheckUpdates;
+
+  /// No description provided for @autoCheckUpdatesDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'启动后及每小时向 GitHub 查询一次新版本，不发送任何设备信息。'**
+  String get autoCheckUpdatesDescription;
+
+  /// No description provided for @checkForUpdates.
+  ///
+  /// In zh, this message translates to:
+  /// **'检查更新'**
+  String get checkForUpdates;
+
+  /// No description provided for @checkNow.
+  ///
+  /// In zh, this message translates to:
+  /// **'立即检查'**
+  String get checkNow;
+
+  /// No description provided for @updateStatusNever.
+  ///
+  /// In zh, this message translates to:
+  /// **'尚未检查'**
+  String get updateStatusNever;
+
+  /// No description provided for @updateStatusChecking.
+  ///
+  /// In zh, this message translates to:
+  /// **'正在检查…'**
+  String get updateStatusChecking;
+
+  /// No description provided for @updateStatusUpToDate.
+  ///
+  /// In zh, this message translates to:
+  /// **'已是最新版本 · {time} 检查'**
+  String updateStatusUpToDate(String time);
+
+  /// No description provided for @updateStatusAvailable.
+  ///
+  /// In zh, this message translates to:
+  /// **'发现新版本 {version}'**
+  String updateStatusAvailable(String version);
+
+  /// No description provided for @updateStatusFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'检查失败，请确认网络后重试。'**
+  String get updateStatusFailed;
+
+  /// No description provided for @updateBannerTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'新版本 {version} 可用'**
+  String updateBannerTitle(String version);
+
+  /// No description provided for @updateBannerSubtitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'当前 {current}'**
+  String updateBannerSubtitle(String current);
+
+  /// No description provided for @updateAction.
+  ///
+  /// In zh, this message translates to:
+  /// **'更新'**
+  String get updateAction;
+
+  /// No description provided for @updateLater.
+  ///
+  /// In zh, this message translates to:
+  /// **'忽略此版本'**
+  String get updateLater;
+
+  /// No description provided for @updateDownloading.
+  ///
+  /// In zh, this message translates to:
+  /// **'正在下载 {percent}%'**
+  String updateDownloading(int percent);
+
+  /// No description provided for @updateInstalling.
+  ///
+  /// In zh, this message translates to:
+  /// **'正在安装…'**
+  String get updateInstalling;
+
+  /// No description provided for @updateInstalledTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'{version} 已安装'**
+  String updateInstalledTitle(String version);
+
+  /// No description provided for @updateInstalledSubtitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'重启 LocalScreen 即可使用新版本。'**
+  String get updateInstalledSubtitle;
+
+  /// No description provided for @updateRestart.
+  ///
+  /// In zh, this message translates to:
+  /// **'重启'**
+  String get updateRestart;
+
+  /// No description provided for @updateOpenedTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'请在安装程序中完成更新'**
+  String get updateOpenedTitle;
+
+  /// No description provided for @updateOpenedSubtitleMac.
+  ///
+  /// In zh, this message translates to:
+  /// **'把 LocalScreen 拖入\"应用程序\"替换旧版，然后重新打开。'**
+  String get updateOpenedSubtitleMac;
+
+  /// No description provided for @updateSheetMeta.
+  ///
+  /// In zh, this message translates to:
+  /// **'当前 {current} · 发布于 {date}'**
+  String updateSheetMeta(String current, String date);
+
+  /// No description provided for @updateWhatsNew.
+  ///
+  /// In zh, this message translates to:
+  /// **'更新内容'**
+  String get updateWhatsNew;
+
+  /// No description provided for @updateInstallButton.
+  ///
+  /// In zh, this message translates to:
+  /// **'下载并安装 · {size}'**
+  String updateInstallButton(String size);
+
+  /// No description provided for @updateOpenPage.
+  ///
+  /// In zh, this message translates to:
+  /// **'前往下载页'**
+  String get updateOpenPage;
+
+  /// No description provided for @updateViewRelease.
+  ///
+  /// In zh, this message translates to:
+  /// **'查看完整说明'**
+  String get updateViewRelease;
+
+  /// No description provided for @updateHintLinux.
+  ///
+  /// In zh, this message translates to:
+  /// **'安装时会请你输入系统密码。'**
+  String get updateHintLinux;
+
+  /// No description provided for @updateHintWindows.
+  ///
+  /// In zh, this message translates to:
+  /// **'安装程序会先关闭 LocalScreen，完成后自动重新打开。'**
+  String get updateHintWindows;
+
+  /// No description provided for @updateHintMac.
+  ///
+  /// In zh, this message translates to:
+  /// **'下载后会打开磁盘映像，把 LocalScreen 拖入\"应用程序\"即可。'**
+  String get updateHintMac;
+
+  /// No description provided for @updateHintManual.
+  ///
+  /// In zh, this message translates to:
+  /// **'这台设备上的 LocalScreen 不能自行安装更新，请从下载页获取新版本。'**
+  String get updateHintManual;
+
+  /// No description provided for @updateHintSession.
+  ///
+  /// In zh, this message translates to:
+  /// **'投屏进行中，结束后再更新。'**
+  String get updateHintSession;
+
+  /// No description provided for @updateFailedNetwork.
+  ///
+  /// In zh, this message translates to:
+  /// **'下载失败，请确认网络后重试。'**
+  String get updateFailedNetwork;
+
+  /// No description provided for @updateFailedChecksum.
+  ///
+  /// In zh, this message translates to:
+  /// **'下载的文件没有通过校验，已丢弃。'**
+  String get updateFailedChecksum;
+
+  /// No description provided for @updateFailedInstall.
+  ///
+  /// In zh, this message translates to:
+  /// **'安装没有完成，请重试或从下载页手动安装。'**
+  String get updateFailedInstall;
+
+  /// No description provided for @updateFailedNoPackage.
+  ///
+  /// In zh, this message translates to:
+  /// **'这个版本没有适用于本机的安装包。'**
+  String get updateFailedNoPackage;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

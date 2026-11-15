@@ -7,7 +7,7 @@ import 'ls_spinner.dart';
 
 /// Visual weight of an [LsButton].
 enum LsButtonVariant {
-  /// Signature-gradient fill; one per screen.
+  /// Solid accent fill; one per screen.
   primary,
 
   /// Hairline outline on surface.
@@ -141,12 +141,10 @@ class LsButton extends StatelessWidget {
               ),
               decoration: BoxDecoration(
                 color: style.fill,
-                gradient: style.gradient,
                 borderRadius: BorderRadius.circular(radius),
                 border: style.border == null
                     ? null
                     : Border.all(color: style.border!, width: ls.size.hairline),
-                boxShadow: style.shadow,
               ),
               child: content,
             ),
@@ -158,30 +156,18 @@ class LsButton extends StatelessWidget {
 }
 
 class _ButtonStyle {
-  const _ButtonStyle({
-    required this.foreground,
-    this.fill,
-    this.gradient,
-    this.border,
-    this.shadow,
-  });
+  const _ButtonStyle({required this.foreground, this.fill, this.border});
 
   final Color foreground;
   final Color? fill;
-  final Gradient? gradient;
   final Color? border;
-  final List<BoxShadow>? shadow;
 
   static _ButtonStyle resolve(LsTokens ls, LsButtonVariant variant, LsInteraction s) {
     final c = ls.colors;
     final lit = s.highlighted;
     switch (variant) {
       case LsButtonVariant.primary:
-        return _ButtonStyle(
-          foreground: c.onAccent,
-          gradient: ls.signatureGradient,
-          shadow: lit ? ls.glow : const [],
-        );
+        return _ButtonStyle(foreground: c.onAccent, fill: lit ? ls.accentHover : c.accent);
       case LsButtonVariant.secondary:
         return _ButtonStyle(
           foreground: c.textPrimary,

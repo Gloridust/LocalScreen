@@ -46,3 +46,5 @@ Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExe}"; Tasks: desktopico
 
 [Run]
 Filename: "{app}\{#AppExe}"; Description: "{cm:LaunchProgram,{#AppName}}"; Flags: nowait postinstall skipifsilent
+; An in-app update runs this installer silently; start the new version again.
+Filename: "{app}\{#AppExe}"; Flags: nowait skipifnotsilent

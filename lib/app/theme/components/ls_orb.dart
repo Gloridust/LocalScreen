@@ -168,15 +168,6 @@ class _RipplePainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeWidth = stroke
         ..color = color.withValues(alpha: 0.42 * fade);
-      final halo = Paint()
-        ..shader = RadialGradient(
-          colors: [
-            color.withValues(alpha: 0),
-            color.withValues(alpha: 0.10 * fade),
-          ],
-          stops: const [0.6, 1],
-        ).createShader(Rect.fromCircle(center: center, radius: radius));
-      canvas.drawCircle(center, radius, halo);
       canvas.drawCircle(center, radius, ring);
     }
   }
@@ -186,8 +177,8 @@ class _RipplePainter extends CustomPainter {
       old.color != color || old.coreRadius != coreRadius || old.curve != curve;
 }
 
-/// The local device's light orb: signature gradient, inner highlight,
-/// steady glow and three ambient ripples.
+/// The local device's orb: a flat accent circle with the device icon and
+/// three ambient ripples.
 ///
 /// When [active] is false (not discoverable) the ripples stop and the orb
 /// desaturates.
@@ -216,28 +207,11 @@ class LsOrb extends StatelessWidget {
     final ls = context.ls;
     final c = ls.colors;
     final duration = context.motionDuration(ls.motion.slow);
-    final highlight = ls.brightness == Brightness.dark ? c.textPrimary : c.surface;
     final core = Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: ls.signatureGradient,
-        boxShadow: [BoxShadow(color: c.accent.withValues(alpha: 0.32), blurRadius: size * 0.45)],
-      ),
-      foregroundDecoration: BoxDecoration(
-        shape: BoxShape.circle,
-        // Soft specular highlight for the "light" feel.
-        gradient: RadialGradient(
-          center: const Alignment(-0.4, -0.5),
-          radius: 0.75,
-          colors: [highlight.withValues(alpha: 0.34), highlight.withValues(alpha: 0)],
-        ),
-        border: Border.all(color: highlight.withValues(alpha: 0.12), width: ls.size.hairline),
-      ),
-      child: icon == null
-          ? null
-          : Icon(icon, size: size * 0.34, color: c.onAccent.withValues(alpha: 0.88)),
+      decoration: BoxDecoration(shape: BoxShape.circle, color: c.accent),
+      child: icon == null ? null : Icon(icon, size: size * 0.34, color: c.onAccent),
     );
     return LsRipples(
       coreSize: size,

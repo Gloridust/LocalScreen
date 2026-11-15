@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../app/l10n.dart';
 import '../../app/theme/lumen.dart';
@@ -13,17 +12,15 @@ import '../../core/platform/autostart.dart';
 import '../../core/platform/device_profile.dart';
 import '../../core/platform/virtual_display.dart';
 import '../../core/prefs/preferences.dart';
+import '../../core/update/update_controller.dart';
 import '../pairing/connect_sheet.dart';
+import '../update/update_format.dart';
+import '../update/update_sheet.dart';
 import 'trusted_devices_controller.dart';
 import 'widgets/settings_group.dart';
 
-/// App version for the About group.
-final appVersionProvider = FutureProvider<String>((ref) async {
-  final info = await PackageInfo.fromPlatform();
-  return info.version;
-});
-
-/// Settings: this device · connection · trusted devices · appearance · about.
+/// Settings: this device · connection · trusted devices · appearance ·
+/// updates · about.
 class SettingsScreen extends ConsumerWidget {
   /// Creates the screen.
   const SettingsScreen({super.key});
@@ -63,6 +60,7 @@ class SettingsScreen extends ConsumerWidget {
             groupGap,
             const _AppearanceGroup(),
             groupGap,
+            if (ref.watch(updateSourceProvider) != null) ...[const _UpdatesGroup(), groupGap],
             const _AboutGroup(),
           ],
         ),
@@ -283,6 +281,54 @@ class _AppearanceGroup extends ConsumerWidget {
   }
 }
 
+class _UpdatesGroup extends ConsumerWidget {
+  const _UpdatesGroup();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final prefs = ref.watch(preferencesProvider);
+    final state = ref.watch(updateControllerProvider);
+    final controller = ref.read(updateControllerProvider.notifier);
+    // A found release leads to the sheet; otherwise the button checks.
+    final hasRelease = state.release != null;
+    return SettingsGroup(
+      title: l10n.sectionUpdates,
+      children: [
+        SettingsRow(
+          title: l10n.autoCheckUpdates,
+          description: l10n.autoCheckUpdatesDescription,
+          trailing: LsSwitch(
+            value: prefs.autoCheckUpdates,
+            semanticLabel: l10n.autoCheckUpdates,
+            onChanged: (v) => ref
+                .read(preferencesProvider.notifier)
+                .update((p) => p.copyWith(autoCheckUpdates: v)),
+          ),
+        ),
+        SettingsRow(
+          title: l10n.checkForUpdates,
+          description: updateStatusText(l10n, state),
+          trailing: hasRelease
+              ? LsButton.primary(
+                  label: state is UpdateInstalled ? l10n.updateRestart : l10n.updateAction,
+                  size: LsButtonSize.small,
+                  onPressed: state is UpdateInstalled
+                      ? controller.restart
+                      : () => showUpdateSheet(context),
+                )
+              : LsButton.ghost(
+                  label: l10n.checkNow,
+                  size: LsButtonSize.small,
+                  loading: state is UpdateChecking,
+                  onPressed: state is UpdateChecking ? null : () => controller.check(manual: true),
+                ),
+        ),
+      ],
+    );
+  }
+}
+
 class _AboutGroup extends ConsumerWidget {
   const _AboutGroup();
 
@@ -291,7 +337,7 @@ class _AboutGroup extends ConsumerWidget {
     final ls = context.ls;
     final c = ls.colors;
     final l10n = context.l10n;
-    final version = ref.watch(appVersionProvider).value ?? '—';
+    final version = '${ref.watch(appVersionProvider)}';
     final node = ref.watch(localNodeProvider);
     final id = node is LocalNodeRunning ? node.identity.id : '—';
     final value = ls.text.stat.copyWith(color: c.textSecondary);
