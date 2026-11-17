@@ -57,12 +57,9 @@ abstract interface class UpdateSource {
 /// nothing but the request itself.
 class GitHubUpdateSource implements UpdateSource {
   /// Reads releases of [repository] (`owner/name`) from the API at [api].
-  GitHubUpdateSource({
-    this.repository = 'Gloridust/LocalScreen',
-    Uri? api,
-    HttpClient? client,
-  }) : api = api ?? Uri.https('api.github.com'),
-       _client = client ?? (HttpClient()..connectionTimeout = const Duration(seconds: 15));
+  GitHubUpdateSource({this.repository = 'Gloridust/LocalScreen', Uri? api, HttpClient? client})
+    : api = api ?? Uri.https('api.github.com'),
+      _client = client ?? (HttpClient()..connectionTimeout = const Duration(seconds: 15));
 
   final String repository;
 

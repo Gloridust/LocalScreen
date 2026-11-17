@@ -152,5 +152,9 @@
   "updateFailedNetwork": "The download failed. Make sure you're online and try again.",
   "updateFailedChecksum": "The download didn't match its checksum and was discarded.",
   "updateFailedInstall": "The install didn't finish. Try again, or install it from the download page.",
-  "updateFailedNoPackage": "This release has no package for this device."
+  "updateFailedNoPackage": "This release has no package for this device.",
+  "windowMinimize": "Minimize",
+  "windowMaximize": "Maximize",
+  "windowRestore": "Restore",
+  "windowClose": "Close"
 }

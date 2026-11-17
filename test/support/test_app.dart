@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:localscreen/app/app.dart';
+import 'package:localscreen/app/window_frame.dart';
 import 'package:localscreen/core/media/fake_media_session.dart';
 import 'package:localscreen/core/media/media_providers.dart';
 import 'package:localscreen/core/node/fake_node_service.dart';
@@ -12,6 +13,7 @@ import 'package:localscreen/core/node/local_node.dart';
 import 'package:localscreen/core/node/node_service.dart';
 import 'package:localscreen/core/platform/autostart.dart';
 import 'package:localscreen/core/platform/device_profile.dart';
+import 'package:localscreen/core/platform/immersive.dart';
 import 'package:localscreen/core/prefs/preferences.dart';
 import 'package:localscreen/core/update/update_controller.dart';
 import 'package:localscreen/core/update/update_installer.dart';
@@ -54,6 +56,8 @@ Future<FakeNodeService> pumpApp(
   UpdateSource? updates,
   UpdateInstaller? installer,
   UpdateSchedule? updateSchedule,
+  TitleBarKind titleBar = TitleBarKind.native,
+  WindowControls? windowControls,
 }) async {
   SharedPreferences.setMockInitialValues({'ls.locale': 'zh', ...prefs});
   final sp = await SharedPreferences.getInstance();
@@ -80,6 +84,8 @@ Future<FakeNodeService> pumpApp(
           const FakeMediaEngine(connectDelay: Duration(milliseconds: 50)),
         ),
         appVersionProvider.overrideWithValue(testVersion),
+        titleBarKindProvider.overrideWithValue(titleBar),
+        if (windowControls != null) windowControlsProvider.overrideWithValue(windowControls),
         if (updates != null) updateSourceProvider.overrideWithValue(updates),
         if (installer != null) updateInstallerProvider.overrideWithValue(installer),
         if (updateSchedule != null) updateScheduleProvider.overrideWithValue(updateSchedule),

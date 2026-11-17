@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:localscreen/core/node/fake_node_service.dart';
+import 'package:localscreen/core/platform/immersive.dart';
 
 import '../support/test_app.dart';
 
@@ -33,6 +34,7 @@ void main() {
     Size size,
     String theme, {
     String locale = 'zh',
+    TitleBarKind titleBar = TitleBarKind.native,
   }) async {
     expect(await loadRealFonts(), isTrue, reason: 'Noto Sans CJK and Material Icons are required');
     _realShadows(true);
@@ -42,10 +44,28 @@ void main() {
       pixelRatio: 2,
       reduceMotion: false,
       prefs: _prefs(theme: theme, locale: locale),
+      titleBar: titleBar,
     );
     await _settle(tester);
     return node;
   }
+
+  testWidgets('title bar · windows · light', skip: skip, (tester) async {
+    final node = await boot(tester, desktopSize, 'light', titleBar: TitleBarKind.windows);
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('$_out/titlebar_windows_light.png'),
+    );
+    await disposeApp(tester, node);
+    _realShadows(false);
+  });
+
+  testWidgets('title bar · gnome · dark', skip: skip, (tester) async {
+    final node = await boot(tester, desktopSize, 'dark', titleBar: TitleBarKind.gnome);
+    await expectLater(find.byType(MaterialApp), matchesGoldenFile('$_out/titlebar_gnome_dark.png'));
+    await disposeApp(tester, node);
+    _realShadows(false);
+  });
 
   testWidgets('home · expanded · dark', skip: skip, (tester) async {
     final node = await boot(tester, desktopSize, 'dark');

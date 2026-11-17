@@ -316,5 +316,9 @@
   "updateFailedNetwork": "下载失败，请确认网络后重试。",
   "updateFailedChecksum": "下载的文件没有通过校验，已丢弃。",
   "updateFailedInstall": "安装没有完成，请重试或从下载页手动安装。",
-  "updateFailedNoPackage": "这个版本没有适用于本机的安装包。"
+  "updateFailedNoPackage": "这个版本没有适用于本机的安装包。",
+  "windowMinimize": "最小化",
+  "windowMaximize": "最大化",
+  "windowRestore": "还原",
+  "windowClose": "关闭"
 }

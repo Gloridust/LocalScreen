@@ -513,4 +513,16 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get updateFailedNoPackage => '这个版本没有适用于本机的安装包。';
+
+  @override
+  String get windowMinimize => '最小化';
+
+  @override
+  String get windowMaximize => '最大化';
+
+  @override
+  String get windowRestore => '还原';
+
+  @override
+  String get windowClose => '关闭';
 }
