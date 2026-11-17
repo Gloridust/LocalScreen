@@ -8,6 +8,7 @@ import 'motion_gate.dart';
 import 'router.dart';
 import 'session_coordinator.dart';
 import 'theme/lumen.dart';
+import 'window_frame.dart';
 
 /// Root widget: theme, localization and the navigator.
 class LocalScreenApp extends ConsumerWidget {
@@ -31,7 +32,7 @@ class LocalScreenApp extends ConsumerWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       localeListResolutionCallback: (locales, _) => resolveAppLocale(locales),
-      builder: (context, child) => MotionGate(child: child!),
+      builder: (context, child) => MotionGate(child: WindowFrame(child: child!)),
       home: const SessionCoordinator(child: HomeScreen()),
     );
   }

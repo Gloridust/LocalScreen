@@ -42,19 +42,59 @@ abstract final class Immersive {
   }
 }
 
-/// Desktop window setup: title and a sensible minimum size.
+/// Who draws the strip at the top of the window.
+enum TitleBarKind {
+  /// The system does (mobile, other Linux desktops, or setup failed).
+  native,
+
+  /// The app does, with Windows-style buttons on the right.
+  windows,
+
+  /// The app does, with GNOME-style round buttons on the right.
+  gnome,
+
+  /// The app does, leaving room for the system's traffic lights on the left.
+  macos,
+}
+
+/// Desktop window setup: title, minimum size and the app-drawn title bar.
 abstract final class DesktopWindow {
+  /// Command-line flag the Linux runner adds when it hid its header bar.
+  static const customTitleBarFlag = '--custom-title-bar';
+
   /// Initialises window_manager; no-op elsewhere. [minimized] is used when
   /// launched at login, so the app waits quietly in the background.
-  static Future<void> init({required String title, bool minimized = false}) async {
-    if (kIsWeb || !(Platform.isLinux || Platform.isWindows || Platform.isMacOS)) return;
+  ///
+  /// Returns who draws the title bar. The system one is hidden where the
+  /// app can draw its own in its own colours: on Windows and macOS through
+  /// window_manager, on GNOME by the runner itself (see `my_application.cc`),
+  /// which reports it through [args].
+  static Future<TitleBarKind> init({
+    required String title,
+    required List<String> args,
+    bool minimized = false,
+  }) async {
+    if (kIsWeb || !(Platform.isLinux || Platform.isWindows || Platform.isMacOS)) {
+      return TitleBarKind.native;
+    }
+    var kind = TitleBarKind.native;
     try {
       await windowManager.ensureInitialized();
       await windowManager.setTitle(title);
       await windowManager.setMinimumSize(const Size(380, 560));
+      if (Platform.isWindows) {
+        await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
+        kind = TitleBarKind.windows;
+      } else if (Platform.isMacOS) {
+        await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
+        kind = TitleBarKind.macos;
+      } else if (args.contains(customTitleBarFlag)) {
+        kind = TitleBarKind.gnome;
+      }
       if (minimized) await windowManager.minimize();
     } catch (e) {
       debugPrint('window_manager unavailable: $e');
     }
+    return kind;
   }
 }

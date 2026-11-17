@@ -44,11 +44,22 @@ static void my_application_activate(GApplication* application) {
   }
 #endif
   if (use_header_bar) {
+    // The app draws its own title bar in its own colours. The header bar
+    // stays set but hidden: that keeps GTK's client-side frame (shadow,
+    // rounded corners, resize edges) around a window with no title strip.
     GtkHeaderBar* header_bar = GTK_HEADER_BAR(gtk_header_bar_new());
-    gtk_widget_show(GTK_WIDGET(header_bar));
     gtk_header_bar_set_title(header_bar, "LocalScreen");
-    gtk_header_bar_set_show_close_button(header_bar, TRUE);
     gtk_window_set_titlebar(window, GTK_WIDGET(header_bar));
+    gtk_window_set_title(window, "LocalScreen");
+    // Tell the Dart side to draw the title bar.
+    const gchar* const* args =
+        const_cast<const gchar* const*>(self->dart_entrypoint_arguments);
+    guint n = args == nullptr ? 0 : g_strv_length(self->dart_entrypoint_arguments);
+    gchar** with_flag = g_new0(gchar*, n + 2);
+    for (guint i = 0; i < n; i++) with_flag[i] = g_strdup(args[i]);
+    with_flag[n] = g_strdup("--custom-title-bar");
+    g_strfreev(self->dart_entrypoint_arguments);
+    self->dart_entrypoint_arguments = with_flag;
   } else {
     gtk_window_set_title(window, "LocalScreen");
   }

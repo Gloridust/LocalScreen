@@ -1010,6 +1010,30 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'这个版本没有适用于本机的安装包。'**
   String get updateFailedNoPackage;
+
+  /// No description provided for @windowMinimize.
+  ///
+  /// In zh, this message translates to:
+  /// **'最小化'**
+  String get windowMinimize;
+
+  /// No description provided for @windowMaximize.
+  ///
+  /// In zh, this message translates to:
+  /// **'最大化'**
+  String get windowMaximize;
+
+  /// No description provided for @windowRestore.
+  ///
+  /// In zh, this message translates to:
+  /// **'还原'**
+  String get windowRestore;
+
+  /// No description provided for @windowClose.
+  ///
+  /// In zh, this message translates to:
+  /// **'关闭'**
+  String get windowClose;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

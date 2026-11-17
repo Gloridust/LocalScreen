@@ -34,6 +34,7 @@ import '../core/update/version.dart';
 import '../features/session/screen_source_picker.dart';
 import 'app.dart';
 import 'l10n.dart';
+import 'window_frame.dart';
 
 /// `--dart-define=LS_FAKE=true`: simulated network, no Rust core.
 const fakeMode = bool.fromEnvironment('LS_FAKE');
@@ -45,7 +46,11 @@ const fakeIncoming = String.fromEnvironment('LS_FAKE_INCOMING');
 /// Initialises platform services and runs the app.
 Future<void> bootstrap(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
-  await DesktopWindow.init(title: 'LocalScreen', minimized: args.contains(autostartFlag));
+  final titleBar = await DesktopWindow.init(
+    title: 'LocalScreen',
+    args: args,
+    minimized: args.contains(autostartFlag),
+  );
   final prefs = await SharedPreferences.getInstance();
   final profile = await DeviceProfile.detect();
   final package = await PackageInfo.fromPlatform();
@@ -99,6 +104,7 @@ Future<void> bootstrap(List<String> args) async {
         nodeServiceProvider.overrideWithValue(node),
         mediaEngineProvider.overrideWithValue(media),
         autostartServiceProvider.overrideWithValue(autostart),
+        titleBarKindProvider.overrideWithValue(titleBar),
         if (!fakeMode && profile.platform == 'linux')
           virtualDisplayProvider.overrideWithValue(
             MutterVirtualDisplayProvider(placements: PreferencesPlacementStore(prefs)),
